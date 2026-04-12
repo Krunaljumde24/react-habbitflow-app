@@ -7,23 +7,20 @@
  *   App → AuthPage | MainLayout → Dashboard | HabitsPage | CalendarPage | AnalyticsPage | SettingsPage
  */
 
-import { useState, useEffect, useMemo, useCallback } from "react";
-import HabitsPage from "./pages/HabitsPage"
-import AuthPage from "./pages/AuthPage"
-import CalendarPage from "./pages/CalendarPage"
-import AnalyticsPage from "./pages/AnalyticsPage"
-import SettingsPage from "./pages/SettingsPage"
-import HabitModal from "./components/HabitModal"
-import Sidebar from "./components/Sidebar"
+import { useState, useEffect, useCallback } from "react";
+import HabitsPage from "./pages/HabitsPage";
+import AuthPage from "./pages/AuthPage";
+import CalendarPage from "./pages/CalendarPage";
+import AnalyticsPage from "./pages/AnalyticsPage";
+import SettingsPage from "./pages/SettingsPage";
+import HabitModal from "./components/HabitModal";
+import Sidebar from "./components/Sidebar";
 import MobileNav from "./components/MobileNav";
 
-import {
-  uid,
-  store,
-  getTheme,
-  hashPw,
-} from "./utils/commonUtils"
+import { uid, store, hashPw } from "./utils/commonUtils";
 import Dashboard from "./components/Dashboard";
+
+import "./App.css";
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -34,11 +31,17 @@ export default function App() {
   const [modal, setModal] = useState(null); // null | "new" | habitObj
   const [isMobile, setMobile] = useState(window.innerWidth < 768);
 
-  const theme = getTheme(darkMode);
+  /* ─── Apply dark class to <html> ─────────────────── */
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, [darkMode]);
 
   /* ─── Bootstrap ─────────────────────────────────── */
   useEffect(() => {
-    // Responsive listener
     const onResize = () => setMobile(window.innerWidth < 768);
     window.addEventListener("resize", onResize);
 
@@ -53,7 +56,11 @@ export default function App() {
     // Seed demo account
     const users = store.get("users") ?? [];
     if (!users.find((u) => u.email === "demo@habitflow.com")) {
-      const demo = { id: "demo-001", name: "Demo User", email: "demo@habitflow.com", passwordHash: hashPw("demo123"), createdAt: new Date(Date.now() - 45 * 864e5).toISOString() };
+      const demo = {
+        id: "demo-001", name: "Demo User", email: "demo@habitflow.com",
+        passwordHash: hashPw("demo123"),
+        createdAt: new Date(Date.now() - 45 * 864e5).toISOString(),
+      };
       store.set("users", [...users, demo]);
     }
 
@@ -108,40 +115,35 @@ export default function App() {
   if (!user) return <AuthPage onAuth={handleAuth} />;
 
   const views = {
-    dashboard: <Dashboard habits={habits} logs={logs} user={user} onToggle={toggleLog} onAddHabit={() => setModal("new")} theme={theme} />,
-    habits: <HabitsPage habits={habits} logs={logs} onAdd={() => setModal("new")} onEdit={(h) => setModal(h)} onDelete={deleteHabit} onToggle={toggleLog} theme={theme} />,
-    calendar: <CalendarPage habits={habits} logs={logs} onToggle={toggleLog} theme={theme} />,
-    analytics: <AnalyticsPage habits={habits} logs={logs} theme={theme} />,
-    settings: <SettingsPage user={user} darkMode={darkMode} onToggleDark={toggleDark} onLogout={handleLogout} habits={habits} logs={logs} theme={theme} />,
+    dashboard: <Dashboard habits={habits} logs={logs} user={user} onToggle={toggleLog} onAddHabit={() => setModal("new")} />,
+    habits: <HabitsPage habits={habits} logs={logs} onAdd={() => setModal("new")} onEdit={(h) => setModal(h)} onDelete={deleteHabit} onToggle={toggleLog} />,
+    calendar: <CalendarPage habits={habits} logs={logs} onToggle={toggleLog} />,
+    analytics: <AnalyticsPage habits={habits} logs={logs} />,
+    settings: <SettingsPage user={user} darkMode={darkMode} onToggleDark={toggleDark} onLogout={handleLogout} habits={habits} logs={logs} />,
   };
 
   return (
-    <div style={{ minHeight: "100vh", background: theme.bg, fontFamily: '"Plus Jakarta Sans", system-ui, sans-serif', color: theme.text }}>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: ${theme.border}; border-radius: 4px; }
-        button, input, select, textarea { font-family: "Plus Jakarta Sans", system-ui, sans-serif; }
-        input[type="date"]::-webkit-calendar-picker-indicator,
-        input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(0.5); }
-      `}</style>
+    <div className="min-h-screen bg-[#f0f2f5] dark:bg-[#0d1117] text-[#1c2128] dark:text-[#e6edf3] font-sans">
 
-      {!isMobile && <Sidebar active={view} setActive={setView} darkMode={darkMode} onToggleDark={toggleDark} user={user} theme={theme} />}
+      {!isMobile && (
+        <Sidebar active={view} setActive={setView} darkMode={darkMode} onToggleDark={toggleDark} user={user} />
+      )}
 
-      <main style={{ marginLeft: isMobile ? 0 : "224px", padding: isMobile ? "20px 16px 88px" : "36px 36px 36px", maxWidth: isMobile ? "none" : "840px" }}>
+      <main className={
+        isMobile
+          ? "px-4 pt-5 pb-24"
+          : "ml-56 p-9 max-w-[840px]"
+      }>
         {views[view] ?? null}
       </main>
 
-      {isMobile && <MobileNav active={view} setActive={setView} theme={theme} />}
+      {isMobile && <MobileNav active={view} setActive={setView} />}
 
       {modal !== null && (
         <HabitModal
           habit={modal === "new" ? null : modal}
           onSave={saveHabit}
           onClose={() => setModal(null)}
-          theme={theme}
         />
       )}
     </div>

@@ -1,6 +1,8 @@
 import React from 'react'
 
-const Card = ({ children, theme, style = {} }) => (
-    <div style={{ background: theme.bgCard, border: `1px solid ${theme.border}`, borderRadius: "16px", padding: "20px", ...style }}>{children}</div>
+const Card = ({ children, className = "" }) => (
+    <div className={`bg-white dark:bg-[#161b22] border border-[#d0d7de] dark:border-[#30363d] rounded-2xl p-5 ${className}`}>
+        {children}
+    </div>
 );
 export default Card

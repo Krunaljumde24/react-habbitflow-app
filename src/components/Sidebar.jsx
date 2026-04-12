@@ -1,9 +1,7 @@
 import React from 'react'
 import {
     Home, List, Calendar, BarChart2, Settings,
-    Plus, Check, X, Flame, Trash2, Edit2,
-    Sun, Moon, LogOut, ChevronLeft, ChevronRight,
-    Bell, Download, Trophy,
+    Sun, Moon,
 } from "lucide-react";
 
 const NAV = [
@@ -14,32 +12,41 @@ const NAV = [
     { id: "settings", Icon: Settings, label: "Settings" },
 ];
 
-function Sidebar({ active, setActive, darkMode, onToggleDark, user, theme }) {
+function Sidebar({ active, setActive, darkMode, onToggleDark, user }) {
     return (
-        <div style={{ width: "224px", background: theme.bgCard, borderRight: `1px solid ${theme.border}`, display: "flex", flexDirection: "column", height: "100vh", position: "fixed", left: 0, top: 0, zIndex: 100 }}>
+        <div className="w-56 bg-white dark:bg-[#161b22] border-r border-[#d0d7de] dark:border-[#30363d] flex flex-col h-screen fixed left-0 top-0 z-[100]">
+
             {/* Logo */}
-            <div style={{ padding: "20px 18px 16px", borderBottom: `1px solid ${theme.border}` }}>
-                <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                    <div style={{ width: "38px", height: "38px", background: "linear-gradient(135deg,#7c3aed,#4f46e5)", borderRadius: "11px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", boxShadow: "0 4px 12px rgba(124,58,237,.4)" }}>🔥</div>
+            <div className="px-4 py-5 border-b border-[#d0d7de] dark:border-[#30363d]">
+                <div className="flex items-center gap-2.5">
+                    <div className="w-[38px] h-[38px] gradient-logo rounded-xl flex items-center justify-center text-lg shadow-logo flex-shrink-0">
+                        🔥
+                    </div>
                     <div>
-                        <div style={{ color: theme.text, fontWeight: "800", fontSize: "16px", letterSpacing: "-0.3px" }}>HabitFlow</div>
-                        <div style={{ color: theme.textSub, fontSize: "11px" }}>Track your progress</div>
+                        <div className="text-[#1c2128] dark:text-[#e6edf3] font-extrabold text-base tracking-tight">HabitFlow</div>
+                        <div className="text-[#656d76] dark:text-[#8b949e] text-[11px]">Track your progress</div>
                     </div>
                 </div>
             </div>
 
             {/* Nav links */}
-            <nav style={{ flex: 1, padding: "12px 10px", display: "flex", flexDirection: "column", gap: "2px" }}>
+            <nav className="flex-1 p-2.5 flex flex-col gap-0.5">
                 {NAV.map(({ id, Icon: Ic, label }) => {
                     const on = active === id;
                     return (
-                        <button key={id} onClick={() => setActive(id)}
-                            style={{
-                                width: "100%", display: "flex", alignItems: "center", gap: "10px", padding: "10px 12px", borderRadius: "10px", border: "none", cursor: "pointer", fontFamily: "inherit", fontSize: "14px", fontWeight: on ? "700" : "500", transition: "all 0.15s",
-                                background: on ? "rgba(124,58,237,.15)" : "transparent",
-                                color: on ? "#8b5cf6" : theme.textSub,
-                                borderLeft: on ? "3px solid #7c3aed" : "3px solid transparent",
-                            }}>
+                        <button
+                            key={id}
+                            onClick={() => setActive(id)}
+                            className={`
+                                w-full flex items-center gap-2.5 px-3 py-2.5 rounded-[10px]
+                                border-none cursor-pointer font-sans text-sm transition-all duration-150
+                                border-l-[3px]
+                                ${on
+                                    ? "bg-violet-600/15 text-violet-500 font-bold border-l-violet-600"
+                                    : "bg-transparent text-[#656d76] dark:text-[#8b949e] font-medium border-l-transparent hover:bg-[#f6f8fa] dark:hover:bg-[#21262d]"
+                                }
+                            `}
+                        >
                             <Ic size={18} />
                             {label}
                         </button>
@@ -48,14 +55,17 @@ function Sidebar({ active, setActive, darkMode, onToggleDark, user, theme }) {
             </nav>
 
             {/* Footer */}
-            <div style={{ padding: "12px 16px", borderTop: `1px solid ${theme.border}`, display: "flex", alignItems: "center", gap: "10px" }}>
-                <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: "linear-gradient(135deg,#7c3aed,#4f46e5)", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: "13px", fontWeight: "800", flexShrink: 0 }}>
+            <div className="px-4 py-3 border-t border-[#d0d7de] dark:border-[#30363d] flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-full gradient-logo flex items-center justify-center text-white text-[13px] font-extrabold flex-shrink-0">
                     {user.name[0].toUpperCase()}
                 </div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ color: theme.text, fontWeight: "700", fontSize: "13px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{user.name}</div>
+                <div className="flex-1 min-w-0">
+                    <div className="text-[#1c2128] dark:text-[#e6edf3] font-bold text-[13px] truncate">{user.name}</div>
                 </div>
-                <button onClick={onToggleDark} style={{ background: "none", border: "none", cursor: "pointer", color: theme.textSub, padding: "4px", display: "flex" }}>
+                <button
+                    onClick={onToggleDark}
+                    className="bg-transparent border-none cursor-pointer text-[#656d76] dark:text-[#8b949e] p-1 flex items-center hover:text-[#1c2128] dark:hover:text-[#e6edf3] transition-colors"
+                >
                     {darkMode ? <Sun size={16} /> : <Moon size={16} />}
                 </button>
             </div>

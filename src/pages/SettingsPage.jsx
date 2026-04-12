@@ -2,16 +2,22 @@ import React, { useState } from 'react'
 import Card from '../components/ui/Card';
 import { Download, LogOut, Moon, Sun } from 'lucide-react';
 
-function SettingsPage({ user, darkMode, onToggleDark, onLogout, habits, logs, theme }) {
+function SettingsPage({ user, darkMode, onToggleDark, onLogout, habits, logs }) {
     const [msg, setMsg] = useState("");
 
     const download = (content, filename, type) => {
-        const a = Object.assign(document.createElement("a"), { href: URL.createObjectURL(new Blob([content], { type })), download: filename });
+        const a = Object.assign(document.createElement("a"), {
+            href: URL.createObjectURL(new Blob([content], { type })),
+            download: filename,
+        });
         a.click(); URL.revokeObjectURL(a.href);
     };
 
     const exportJSON = () => {
-        download(JSON.stringify({ user: { name: user.name, email: user.email }, habits, logs, exportedAt: new Date().toISOString() }, null, 2), "habitflow-export.json", "application/json");
+        download(
+            JSON.stringify({ user: { name: user.name, email: user.email }, habits, logs, exportedAt: new Date().toISOString() }, null, 2),
+            "habitflow-export.json", "application/json"
+        );
         setMsg("JSON exported!"); setTimeout(() => setMsg(""), 2500);
     };
 
@@ -22,74 +28,92 @@ function SettingsPage({ user, darkMode, onToggleDark, onLogout, habits, logs, th
         setMsg("CSV exported!"); setTimeout(() => setMsg(""), 2500);
     };
 
-    const Row = ({ label, value }) => (
-        <div style={{ display: "flex", justifyContent: "space-between", padding: "12px 0", borderBottom: `1px solid ${theme.border}` }}>
-            <span style={{ color: theme.textSub, fontSize: "14px" }}>{label}</span>
-            <span style={{ color: theme.text, fontWeight: "700", fontSize: "14px" }}>{value}</span>
+    const StatRow = ({ label, value }) => (
+        <div className="flex justify-between py-3 border-b border-[#d0d7de] dark:border-[#30363d]">
+            <span className="text-[#656d76] dark:text-[#8b949e] text-sm">{label}</span>
+            <span className="text-[#1c2128] dark:text-[#e6edf3] font-bold text-sm">{value}</span>
         </div>
     );
 
     return (
         <div>
-            <h1 style={{ color: theme.text, fontSize: "24px", fontWeight: "800", margin: "0 0 24px" }}>Settings</h1>
+            <h1 className="text-[#1c2128] dark:text-[#e6edf3] text-2xl font-extrabold m-0 mb-6">Settings</h1>
 
             {/* Profile */}
-            <Card theme={theme} style={{ marginBottom: "14px" }}>
-                <h3 style={{ color: theme.text, fontWeight: "800", fontSize: "15px", margin: "0 0 16px" }}>Profile</h3>
-                <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
-                    <div style={{ width: "56px", height: "56px", borderRadius: "50%", background: "linear-gradient(135deg,#7c3aed,#4f46e5)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, fontSize: "22px", fontWeight: "800", color: "#fff" }}>
+            <Card className="mb-3.5">
+                <h3 className="text-[#1c2128] dark:text-[#e6edf3] font-extrabold text-[15px] m-0 mb-4">Profile</h3>
+                <div className="flex items-center gap-3.5">
+                    <div className="w-14 h-14 rounded-full gradient-logo flex items-center justify-center flex-shrink-0 text-[22px] font-extrabold text-white">
                         {user.name[0].toUpperCase()}
                     </div>
                     <div>
-                        <div style={{ color: theme.text, fontWeight: "800", fontSize: "17px" }}>{user.name}</div>
-                        <div style={{ color: theme.textSub, fontSize: "13px" }}>{user.email}</div>
+                        <div className="text-[#1c2128] dark:text-[#e6edf3] font-extrabold text-[17px]">{user.name}</div>
+                        <div className="text-[#656d76] dark:text-[#8b949e] text-[13px]">{user.email}</div>
                     </div>
                 </div>
             </Card>
 
             {/* Appearance */}
-            <Card theme={theme} style={{ marginBottom: "14px" }}>
-                <h3 style={{ color: theme.text, fontWeight: "800", fontSize: "15px", margin: "0 0 16px" }}>Appearance</h3>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+            <Card className="mb-3.5">
+                <h3 className="text-[#1c2128] dark:text-[#e6edf3] font-extrabold text-[15px] m-0 mb-4">Appearance</h3>
+                <div className="flex justify-between items-center">
+                    <div className="flex gap-2.5 items-center">
                         {darkMode ? <Moon size={18} color="#8b5cf6" /> : <Sun size={18} color="#f59e0b" />}
-                    <div>
-                            <div style={{ color: theme.text, fontWeight: "700", fontSize: "14px" }}>Dark Mode</div>
-                            <div style={{ color: theme.textSub, fontSize: "12px" }}>{darkMode ? "Currently on" : "Currently off"}</div>
+                        <div>
+                            <div className="text-[#1c2128] dark:text-[#e6edf3] font-bold text-sm">Dark Mode</div>
+                            <div className="text-[#656d76] dark:text-[#8b949e] text-xs">{darkMode ? "Currently on" : "Currently off"}</div>
                         </div>
                     </div>
                     {/* Toggle switch */}
-                    <div onClick={onToggleDark} style={{ width: "50px", height: "27px", borderRadius: "99px", background: darkMode ? "#7c3aed" : theme.bgHover, border: `1px solid ${theme.border}`, cursor: "pointer", position: "relative", transition: "background 0.25s" }}>
-                        <div style={{ position: "absolute", top: "3px", left: darkMode ? "25px" : "3px", width: "19px", height: "19px", borderRadius: "50%", background: "#fff", transition: "left 0.25s", boxShadow: "0 1px 4px rgba(0,0,0,.35)" }} />
+                    <div
+                        onClick={onToggleDark}
+                        className="w-[50px] h-[27px] rounded-full border border-[#d0d7de] dark:border-[#30363d] cursor-pointer relative transition-colors duration-[250ms]"
+                        style={{ background: darkMode ? "#7c3aed" : "#f6f8fa" }}
+                    >
+                        <div
+                            className="absolute top-[3px] w-[19px] h-[19px] rounded-full bg-white transition-[left] duration-[250ms]"
+                            style={{ left: darkMode ? "25px" : "3px", boxShadow: "0 1px 4px rgba(0,0,0,.35)" }}
+                        />
                     </div>
                 </div>
             </Card>
 
             {/* Data Export */}
-            <Card theme={theme} style={{ marginBottom: "14px" }}>
-                <h3 style={{ color: theme.text, fontWeight: "800", fontSize: "15px", margin: "0 0 16px" }}>Export Data</h3>
-                {msg && <div style={{ color: "#22c55e", fontSize: "13px", marginBottom: "12px", fontWeight: "600" }}>✅ {msg}</div>}
-                <div style={{ display: "flex", gap: "10px" }}>
-                    <button onClick={exportJSON} style={{ flex: 1, padding: "12px", background: theme.bgHover, border: `1px solid ${theme.border}`, borderRadius: "10px", color: theme.text, cursor: "pointer", fontWeight: "700", fontSize: "13px", fontFamily: "inherit", display: "flex", alignItems: "center", justifyContent: "center", gap: "6px" }}>
+            <Card className="mb-3.5">
+                <h3 className="text-[#1c2128] dark:text-[#e6edf3] font-extrabold text-[15px] m-0 mb-4">Export Data</h3>
+                {msg && (
+                    <div className="text-green-500 text-[13px] mb-3 font-semibold">✅ {msg}</div>
+                )}
+                <div className="flex gap-2.5">
+                    <button
+                        onClick={exportJSON}
+                        className="flex-1 py-3 bg-[#f6f8fa] dark:bg-[#21262d] border border-[#d0d7de] dark:border-[#30363d] rounded-[10px] text-[#1c2128] dark:text-[#e6edf3] cursor-pointer font-bold text-[13px] font-sans flex items-center justify-center gap-1.5 hover:bg-[#e8eaed] dark:hover:bg-[#30363d] transition-colors"
+                    >
                         <Download size={14} /> JSON
                     </button>
-                    <button onClick={exportCSV} style={{ flex: 1, padding: "12px", background: theme.bgHover, border: `1px solid ${theme.border}`, borderRadius: "10px", color: theme.text, cursor: "pointer", fontWeight: "700", fontSize: "13px", fontFamily: "inherit", display: "flex", alignItems: "center", justifyContent: "center", gap: "6px" }}>
+                    <button
+                        onClick={exportCSV}
+                        className="flex-1 py-3 bg-[#f6f8fa] dark:bg-[#21262d] border border-[#d0d7de] dark:border-[#30363d] rounded-[10px] text-[#1c2128] dark:text-[#e6edf3] cursor-pointer font-bold text-[13px] font-sans flex items-center justify-center gap-1.5 hover:bg-[#e8eaed] dark:hover:bg-[#30363d] transition-colors"
+                    >
                         <Download size={14} /> CSV
                     </button>
                 </div>
             </Card>
 
             {/* Stats */}
-            <Card theme={theme} style={{ marginBottom: "20px" }}>
-                <h3 style={{ color: theme.text, fontWeight: "800", fontSize: "15px", margin: "0 0 4px" }}>Account Stats</h3>
-                <Row label="Habits created" value={habits.length} />
-                <Row label="Log entries" value={logs.length} />
-                <Row label="Completed sessions" value={logs.filter((l) => l.completed).length} />
-                <Row label="Member since" value={new Date(user.createdAt ?? Date.now()).toLocaleDateString()} />
+            <Card className="mb-5">
+                <h3 className="text-[#1c2128] dark:text-[#e6edf3] font-extrabold text-[15px] m-0 mb-1">Account Stats</h3>
+                <StatRow label="Habits created" value={habits.length} />
+                <StatRow label="Log entries" value={logs.length} />
+                <StatRow label="Completed sessions" value={logs.filter((l) => l.completed).length} />
+                <StatRow label="Member since" value={new Date(user.createdAt ?? Date.now()).toLocaleDateString()} />
             </Card>
 
             {/* Logout */}
-            <button onClick={onLogout} style={{ width: "100%", padding: "15px", background: "rgba(239,68,68,.08)", border: "1px solid rgba(239,68,68,.3)", borderRadius: "14px", color: "#ef4444", cursor: "pointer", fontWeight: "800", fontSize: "15px", fontFamily: "inherit", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px" }}>
+            <button
+                onClick={onLogout}
+                className="w-full py-[15px] bg-red-500/[.08] border border-red-500/30 rounded-2xl text-red-500 cursor-pointer font-extrabold text-[15px] font-sans flex items-center justify-center gap-2 hover:bg-red-500/15 transition-colors"
+            >
                 <LogOut size={18} /> Sign Out
             </button>
         </div>

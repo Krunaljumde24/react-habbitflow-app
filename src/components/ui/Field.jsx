@@ -1,8 +1,12 @@
 import React from 'react'
 
-const Field = ({ label, children, style = {} }) => (
-    <div style={{ marginBottom: "16px", ...style }}>
-        {label && <label style={{ display: "block", fontSize: "12px", fontWeight: "600", color: "#8b949e", marginBottom: "6px", textTransform: "uppercase", letterSpacing: "0.06em" }}>{label}</label>}
+const Field = ({ label, children, className = "" }) => (
+    <div className={`mb-4 ${className}`}>
+        {label && (
+            <label className="block text-xs font-semibold text-[#656d76] dark:text-[#8b949e] mb-1.5 uppercase tracking-wide">
+                {label}
+            </label>
+        )}
         {children}
     </div>
 );
