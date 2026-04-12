@@ -1,111 +1,143 @@
-/* :root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+@import "tailwindcss";
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
+/* ─────────────────────────────────────
+   GOOGLE FONT
+───────────────────────────────────── */
+/* @import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"); */
 
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/* ─────────────────────────────────────
+   THEME TOKENS (v4 style)
+───────────────────────────────────── */
+:root {
+  /* Font */
+  --font-sans: "Plus Jakarta Sans", system-ui, sans-serif;
 
-  @media (max-width: 1024px) {
-    font-size: 16px;
+  /* App background */
+  --app-bg: #f0f2f5;
+  --app-card: #ffffff;
+  --app-hover: #f6f8fa;
+  --app-input: #f6f8fa;
+
+  /* Borders */
+  --border-color: #d0d7de;
+
+  /* Text */
+  --text-primary: #1c2128;
+  --text-secondary: #656d76;
+
+  /* Violet palette */
+  --violet-500: #8b5cf6;
+  --violet-600: #7c3aed;
+  --violet-700: #6d28d9;
+  --violet-800: #4f46e5;
+
+  /* Shadows */
+  --shadow-app-light: 0 4px 20px rgba(0, 0, 0, 0.08);
+  --shadow-accent: 0 4px 14px rgba(124, 58, 237, 0.35);
+  --shadow-accent-lg: 0 6px 20px rgba(124, 58, 237, 0.4);
+  --shadow-logo: 0 4px 12px rgba(124, 58, 237, 0.4);
+}
+
+/* ── Dark mode ── */
+.dark {
+  --app-bg: #0d1117;
+  --app-card: #161b22;
+  --app-hover: #21262d;
+  --app-input: #0d1117;
+
+  --border-color: #30363d;
+
+  --text-primary: #e6edf3;
+  --text-secondary: #8b949e;
+
+  --shadow-app-light: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+/* ─────────────────────────────────────
+   BASE STYLES
+───────────────────────────────────── */
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    font-family: var(--font-sans);
+    background: var(--app-bg);
+    color: var(--text-primary);
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    font-family: var(--font-sans);
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
+/* ─────────────────────────────────────
+   UTILITIES (CUSTOM)
+───────────────────────────────────── */
+@layer utilities {
+  .bg-app {
+    background: var(--app-bg);
   }
 
-  #social .button-icon {
-    filter: invert(1) brightness(2);
+  .bg-card {
+    background: var(--app-card);
+  }
+
+  .bg-hover {
+    background: var(--app-hover);
+  }
+
+  .text-primary {
+    color: var(--text-primary);
+  }
+
+  .text-secondary {
+    color: var(--text-secondary);
+  }
+
+  .border-default {
+    border-color: var(--border-color);
+  }
+
+  .shadow-app {
+    box-shadow: var(--shadow-app-light);
+  }
+
+  .shadow-accent {
+    box-shadow: var(--shadow-accent);
+  }
+
+  .shadow-accent-lg {
+    box-shadow: var(--shadow-accent-lg);
+  }
+
+  .shadow-logo {
+    box-shadow: var(--shadow-logo);
+  }
+
+  /* Gradients */
+  .gradient-brand {
+    background: linear-gradient(135deg, var(--violet-600), var(--violet-700));
+  }
+
+  .gradient-logo {
+    background: linear-gradient(135deg, var(--violet-600), var(--violet-800));
+  }
+
+  .gradient-success {
+    background: linear-gradient(90deg, #22c55e, #16a34a);
+  }
+
+  .gradient-progress {
+    background: linear-gradient(90deg, var(--violet-600), #22c55e);
+  }
+
+  .gradient-auth-bg {
+    background: linear-gradient(140deg, #0d1117 0%, #161b22 60%, #0d1117 100%);
   }
 }
-
-body {
-  margin: 0;
-}
-
-#root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
-
-h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
-}
-
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
-  }
-}
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
-  }
-}
-p {
-  margin: 0;
-}
-
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
-}
-
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
-} */

@@ -8,22 +8,26 @@ const NAV = [
     { id: "settings", Icon: Settings, label: "Settings" },
 ];
 
-function MobileNav({ active, setActive, theme }) {
+function MobileNav({ active, setActive }) {
     return (
-        <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, background: theme.bgCard, borderTop: `1px solid ${theme.border}`, display: "flex", zIndex: 100, paddingBottom: "env(safe-area-inset-bottom,0px)" }}>
+        <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-[#161b22] border-t border-[#d0d7de] dark:border-[#30363d] flex z-[100] pb-[env(safe-area-inset-bottom,0px)]">
             {NAV.map(({ id, Icon: Ic, label }) => {
                 const on = active === id;
                 return (
-                    <button key={id} onClick={() => setActive(id)}
-                        style={{ flex: 1, padding: "10px 4px", display: "flex", flexDirection: "column", alignItems: "center", gap: "3px", background: "none", border: "none", cursor: "pointer", fontFamily: "inherit", transition: "all 0.15s" }}>
-                        <Ic size={20} color={on ? "#8b5cf6" : theme.textSub} />
-                        <span style={{ fontSize: "10px", color: on ? "#8b5cf6" : theme.textSub, fontWeight: on ? "700" : "500" }}>{label}</span>
+                    <button
+                        key={id}
+                        onClick={() => setActive(id)}
+                        className="flex-1 py-2.5 px-1 flex flex-col items-center gap-[3px] bg-transparent border-none cursor-pointer font-sans transition-all duration-150"
+                    >
+                        <Ic size={20} color={on ? "#8b5cf6" : "#8b949e"} />
+                        <span className={`text-[10px] ${on ? "text-violet-500 font-bold" : "text-[#8b949e] dark:text-[#8b949e] font-medium"}`}>
+                            {label}
+                        </span>
                     </button>
                 );
             })}
         </div>
     );
 }
-
 
 export default MobileNav;

@@ -2,11 +2,9 @@ import React from 'react'
 import { todayStr, isHabitDue, calcGlobalStreak } from "../utils/commonUtils"
 import Card from './ui/Card';
 import { Plus } from 'lucide-react';
-
 import TaskRow from "../components/TaskRow"
 
-
-function Dashboard({ habits, logs, user, onToggle, onAddHabit, theme }) {
+function Dashboard({ habits, logs, user, onToggle, onAddHabit }) {
     const today = todayStr();
     const dueToday = habits.filter((h) => isHabitDue(h, today));
     const doneToday = dueToday.filter((h) => logs.some((l) => l.habitId === h.id && l.date === today && l.completed));
@@ -22,40 +20,43 @@ function Dashboard({ habits, logs, user, onToggle, onAddHabit, theme }) {
     return (
         <div>
             {/* Greeting */}
-            <p style={{ color: theme.textSub, fontSize: "14px", margin: "0 0 4px" }}>{dateLabel}</p>
-            <h1 style={{ color: theme.text, fontSize: "28px", fontWeight: "800", margin: "0 0 24px", letterSpacing: "-0.5px" }}>
+            <p className="text-[#656d76] dark:text-[#8b949e] text-sm mb-1">{dateLabel}</p>
+            <h1 className="text-[#1c2128] dark:text-[#e6edf3] text-[28px] font-extrabold mb-6 tracking-tight">
                 {greet}, {user.name.split(" ")[0]} 👋
             </h1>
 
             {/* Stats row */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "12px", marginBottom: "18px" }}>
+            <div className="grid grid-cols-3 gap-3 mb-[18px]">
                 {[
                     { icon: "✅", val: `${doneToday.length}/${dueToday.length}`, label: "Today" },
                     { icon: "📊", val: `${rate}%`, label: "Completion" },
                     { icon: "🔥", val: `${streak}d`, label: "Streak" },
                 ].map((s) => (
-                    <Card key={s.label} theme={theme} style={{ padding: "16px", textAlign: "center" }}>
-                        <div style={{ fontSize: "22px", marginBottom: "4px" }}>{s.icon}</div>
-                        <div style={{ color: "#8b5cf6", fontSize: "22px", fontWeight: "800", lineHeight: 1 }}>{s.val}</div>
-                        <div style={{ color: theme.textSub, fontSize: "11px", marginTop: "4px", fontWeight: "600" }}>{s.label}</div>
+                    <Card key={s.label} className="!p-4 text-center">
+                        <div className="text-[22px] mb-1">{s.icon}</div>
+                        <div className="text-violet-500 text-[22px] font-extrabold leading-none">{s.val}</div>
+                        <div className="text-[#656d76] dark:text-[#8b949e] text-[11px] mt-1 font-semibold">{s.label}</div>
                     </Card>
                 ))}
             </div>
 
             {/* Progress bar */}
             {dueToday.length > 0 && (
-                <Card theme={theme} style={{ padding: "14px 18px", marginBottom: "20px" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px" }}>
-                        <span style={{ color: theme.textSub, fontSize: "13px", fontWeight: "600" }}>Daily Progress</span>
-                        <span style={{ color: rate === 100 ? "#22c55e" : theme.text, fontSize: "13px", fontWeight: "800" }}>
+                <Card className="!px-[18px] !py-3.5 mb-5">
+                    <div className="flex justify-between mb-2">
+                        <span className="text-[#656d76] dark:text-[#8b949e] text-[13px] font-semibold">Daily Progress</span>
+                        <span className={`text-[13px] font-extrabold ${rate === 100 ? "text-green-500" : "text-[#1c2128] dark:text-[#e6edf3]"}`}>
                             {doneToday.length} of {dueToday.length} done
                         </span>
                     </div>
-                    <div style={{ background: theme.bgHover, borderRadius: "99px", height: "8px", overflow: "hidden" }}>
-                        <div style={{ width: `${rate}%`, height: "100%", background: rate === 100 ? "linear-gradient(90deg,#22c55e,#16a34a)" : "linear-gradient(90deg,#7c3aed,#22c55e)", borderRadius: "99px", transition: "width 0.6s cubic-bezier(.4,0,.2,1)" }} />
+                    <div className="bg-[#f6f8fa] dark:bg-[#21262d] rounded-full h-2 overflow-hidden">
+                        <div
+                            className={`h-full rounded-full transition-[width] duration-[600ms] ease-[cubic-bezier(.4,0,.2,1)] ${rate === 100 ? "gradient-success" : "gradient-progress"}`}
+                            style={{ width: `${rate}%` }}
+                        />
                     </div>
                     {rate === 100 && dueToday.length > 0 && (
-                        <p style={{ color: "#22c55e", fontSize: "12px", fontWeight: "700", margin: "8px 0 0", textAlign: "center" }}>
+                        <p className="text-green-500 text-xs font-bold mt-2 text-center">
                             🎉 Perfect day! All habits complete — streak continues!
                         </p>
                     )}
@@ -63,51 +64,54 @@ function Dashboard({ habits, logs, user, onToggle, onAddHabit, theme }) {
             )}
 
             {/* Task list header */}
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
-                <h2 style={{ color: theme.text, fontSize: "16px", fontWeight: "800", margin: 0 }}>Today's Tasks</h2>
-                <button onClick={onAddHabit} style={{ display: "flex", alignItems: "center", gap: "6px", padding: "7px 13px", background: "linear-gradient(135deg,#7c3aed,#6d28d9)", border: "none", borderRadius: "8px", color: "#fff", fontSize: "12px", fontWeight: "700", cursor: "pointer", fontFamily: "inherit" }}>
+            <div className="flex justify-between items-center mb-3">
+                <h2 className="text-[#1c2128] dark:text-[#e6edf3] text-base font-extrabold m-0">Today's Tasks</h2>
+                <button
+                    onClick={onAddHabit}
+                    className="flex items-center gap-1.5 px-3 py-[7px] gradient-brand border-none rounded-lg text-white text-xs font-bold cursor-pointer font-sans"
+                >
                     <Plus size={13} /> Add
                 </button>
             </div>
 
             {dueToday.length === 0 ? (
-                <div style={{ background: theme.bgCard, border: `2px dashed ${theme.border}`, borderRadius: "16px", padding: "48px 24px", textAlign: "center" }}>
-                    <div style={{ fontSize: "48px", marginBottom: "12px" }}>🌱</div>
-                    <p style={{ color: theme.textSub, margin: 0, fontSize: "15px" }}>No habits today — create your first one!</p>
+                <div className="bg-white dark:bg-[#161b22] border-2 border-dashed border-[#d0d7de] dark:border-[#30363d] rounded-2xl py-12 px-6 text-center">
+                    <div className="text-5xl mb-3">🌱</div>
+                    <p className="text-[#656d76] dark:text-[#8b949e] m-0 text-[15px]">No habits today — create your first one!</p>
                 </div>
             ) : (
-                <Card theme={theme} style={{ padding: "6px" }}>
+                <Card className="!p-1.5">
                     {/* Pending section */}
                     {pending.length > 0 && (
                         <>
-                            <div style={{ padding: "8px 14px 4px", display: "flex", alignItems: "center", gap: "8px" }}>
-                                <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: theme.textSub }} />
-                                <span style={{ color: theme.textSub, fontSize: "11px", fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.07em" }}>
+                            <div className="px-3.5 pt-2 pb-1 flex items-center gap-2">
+                                <div className="w-1.5 h-1.5 rounded-full bg-[#656d76] dark:bg-[#8b949e]" />
+                                <span className="text-[#656d76] dark:text-[#8b949e] text-[11px] font-bold uppercase tracking-[0.07em]">
                                     Pending — {pending.length}
                                 </span>
                             </div>
                             {pending.map((h) => (
-                                <TaskRow key={h.id} habit={h} done={false} onToggle={() => onToggle(h.id, today)} theme={theme} />
+                                <TaskRow key={h.id} habit={h} done={false} onToggle={() => onToggle(h.id, today)} />
                             ))}
                         </>
                     )}
 
                     {/* Divider */}
                     {pending.length > 0 && doneToday.length > 0 && (
-                        <div style={{ height: "1px", background: theme.border, margin: "4px 14px 0" }} />
+                        <div className="h-px bg-[#d0d7de] dark:bg-[#30363d] mx-3.5 mt-1" />
                     )}
 
                     {/* Completed section */}
                     {doneToday.length > 0 && (
                         <>
-                            <div style={{ padding: "8px 14px 4px", display: "flex", alignItems: "center", gap: "8px" }}>
-                                <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#22c55e" }} />
-                                <span style={{ color: "#22c55e", fontSize: "11px", fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.07em" }}>
+                            <div className="px-3.5 pt-2 pb-1 flex items-center gap-2">
+                                <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
+                                <span className="text-green-500 text-[11px] font-bold uppercase tracking-[0.07em]">
                                     Completed — {doneToday.length}
                                 </span>
                             </div>
                             {doneToday.map((h) => (
-                                <TaskRow key={h.id} habit={h} done={true} onToggle={() => onToggle(h.id, today)} theme={theme} />
+                                <TaskRow key={h.id} habit={h} done={true} onToggle={() => onToggle(h.id, today)} />
                             ))}
                         </>
                     )}

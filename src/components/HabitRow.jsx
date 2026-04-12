@@ -1,42 +1,61 @@
 import React from 'react'
 import { CATEGORIES } from '../constants/categories';
-import Tag from './ui/Tag';
 import { Check, Edit2, Trash2 } from 'lucide-react';
+import Tag from './ui/Tag';
 
-function HabitRow({ habit, done, streak, onToggle, onEdit, onDelete, theme, description, totalDone }) {
+function HabitRow({ habit, done, streak, onToggle, onEdit, onDelete, description, totalDone }) {
     const cat = CATEGORIES.find((c) => c.id === habit.category) ?? CATEGORIES[7];
+
     return (
-        <div style={{ background: theme.bgCard, border: `1px solid ${done ? cat.color + "44" : theme.border}`, borderRadius: "14px", padding: "14px 16px", display: "flex", alignItems: "center", gap: "14px", transition: "all 0.2s" }}>
-            {/* Toggle */}
-            <button onClick={onToggle}
-                style={{ width: "30px", height: "30px", borderRadius: "50%", border: `2px solid ${done ? cat.color : theme.border}`, background: done ? cat.color : "transparent", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0, transition: "all 0.2s" }}>
+        <div
+            className="bg-white dark:bg-[#161b22] rounded-2xl p-3.5 px-4 flex items-center gap-3.5 transition-all duration-200"
+            style={{ border: `1px solid ${done ? cat.color + "44" : "var(--border)"}` }}
+        >
+            {/* Toggle button */}
+            <button
+                onClick={onToggle}
+                className="w-[30px] h-[30px] rounded-full flex items-center justify-center cursor-pointer flex-shrink-0 transition-all duration-200"
+                style={{
+                    border: `2px solid ${done ? cat.color : "#30363d"}`,
+                    background: done ? cat.color : "transparent",
+                }}
+            >
                 {done && <Check size={14} color="#fff" strokeWidth={3} />}
             </button>
 
             {/* Info */}
-            <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "4px" }}>
-                    <span style={{ fontSize: "16px" }}>{cat.emoji}</span>
-                    <span style={{ color: done ? theme.textSub : theme.text, fontSize: "15px", fontWeight: "700", textDecoration: done ? "line-through" : "none", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{habit.name}</span>
+            <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-1.5 mb-1">
+                    <span className="text-base">{cat.emoji}</span>
+                    <span className={`text-[15px] font-bold truncate ${done ? "text-[#656d76] dark:text-[#8b949e] line-through" : "text-[#1c2128] dark:text-[#e6edf3]"}`}>
+                        {habit.name}
+                    </span>
                 </div>
-                <div style={{ display: "flex", gap: "7px", flexWrap: "wrap", alignItems: "center" }}>
+                <div className="flex gap-[7px] flex-wrap items-center">
                     <Tag color={cat.color}>{cat.label}</Tag>
-                    <Tag color={theme.textSub} style={{ textTransform: "capitalize" }}>{habit.frequency}</Tag>
-                    {streak.current > 0 && <span style={{ fontSize: "11px", color: "#f97316", fontWeight: "700" }}>🔥 {streak.current}d</span>}
+                    <Tag color="#8b949e">{habit.frequency}</Tag>
+                    {streak.current > 0 && (
+                        <span className="text-[11px] text-orange-400 font-bold">🔥 {streak.current}d</span>
+                    )}
                 </div>
-
-                <div style={{ marginLeft: "5px", marginTop: "5px", color: theme.textSub, fontSize: "12px", paddingBottom: "2px" }}>
-                    {description} &nbsp;·&nbsp; {totalDone} completions total
+                <div className="ml-[5px] mt-[5px] text-[#656d76] dark:text-[#8b949e] text-xs pb-0.5">
+                    {description}&nbsp;·&nbsp;{totalDone} completions total
                 </div>
             </div>
 
             {/* Actions */}
             {onEdit && (
-                <div style={{ display: "flex", gap: "6px" }}>
-                    <button onClick={onEdit} style={{ padding: "7px", background: theme.bgHover, border: `1px solid ${theme.border}`, borderRadius: "8px", cursor: "pointer", color: theme.textSub, display: "flex" }}>
+                <div className="flex gap-1.5">
+                    <button
+                        onClick={onEdit}
+                        className="p-[7px] bg-[#f6f8fa] dark:bg-[#21262d] border border-[#d0d7de] dark:border-[#30363d] rounded-lg cursor-pointer text-[#656d76] dark:text-[#8b949e] flex hover:bg-[#e8eaed] dark:hover:bg-[#30363d] transition-colors"
+                    >
                         <Edit2 size={14} />
                     </button>
-                    <button onClick={onDelete} style={{ padding: "7px", background: "rgba(239,68,68,.1)", border: "1px solid rgba(239,68,68,.2)", borderRadius: "8px", cursor: "pointer", color: "#ef4444", display: "flex" }}>
+                    <button
+                        onClick={onDelete}
+                        className="p-[7px] bg-red-500/10 border border-red-500/20 rounded-lg cursor-pointer text-red-500 flex hover:bg-red-500/20 transition-colors"
+                    >
                         <Trash2 size={14} />
                     </button>
                 </div>

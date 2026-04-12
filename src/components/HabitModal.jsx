@@ -4,22 +4,26 @@ import Field from './ui/Field';
 import Input from './ui/Input';
 import { X } from 'lucide-react';
 import { CATEGORIES } from '../constants/categories';
+import { WEEKDAY_LABELS } from '../constants/weekLabes';
 
-function HabitModal({ habit, onSave, onClose, theme }) {
+function HabitModal({ habit, onSave, onClose }) {
     const [form, setForm] = useState({
-        name: habit?.name ?? "",
+        name:        habit?.name        ?? "",
         description: habit?.description ?? "",
-        category: habit?.category ?? "health",
-        frequency: habit?.frequency ?? "daily",
-        customDays: habit?.customDays ?? [],
-        startDate: habit?.startDate ?? todayStr(),
-        reminder: habit?.reminder ?? "",
+        category:    habit?.category    ?? "health",
+        frequency:   habit?.frequency   ?? "daily",
+        customDays:  habit?.customDays  ?? [],
+        startDate:   habit?.startDate   ?? todayStr(),
+        reminder:    habit?.reminder    ?? "",
     });
     const [err, setErr] = useState("");
 
     const set = (field, val) => setForm((f) => ({ ...f, [field]: val }));
     const toggleDay = (i) => setForm((f) => ({
-        ...f, customDays: f.customDays.includes(i) ? f.customDays.filter((d) => d !== i) : [...f.customDays, i],
+        ...f,
+        customDays: f.customDays.includes(i)
+            ? f.customDays.filter((d) => d !== i)
+            : [...f.customDays, i],
     }));
 
     const save = () => {
@@ -27,60 +31,109 @@ function HabitModal({ habit, onSave, onClose, theme }) {
         onSave(form);
     };
 
-    const overlay = { position: "fixed", inset: 0, background: "rgba(0,0,0,.75)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: "16px", backdropFilter: "blur(6px)" };
-    const modal = { background: theme.bgCard, border: `1px solid ${theme.border}`, borderRadius: "20px", padding: "28px", width: "100%", maxWidth: "500px", maxHeight: "92vh", overflowY: "auto", boxShadow: theme.shadow };
-
     return (
-        <div style={overlay} onClick={(e) => e.target === e.currentTarget && onClose()}>
-            <div style={modal}>
+        /* Overlay */
+        <div
+            className="fixed inset-0 bg-black/75 z-[1000] flex items-center justify-center p-4 backdrop-blur-[6px]"
+            onClick={(e) => e.target === e.currentTarget && onClose()}
+        >
+            {/* Modal panel */}
+            <div className="bg-white dark:bg-[#161b22] border border-[#d0d7de] dark:border-[#30363d] rounded-[20px] p-7 w-full max-w-[500px] max-h-[92vh] overflow-y-auto shadow-[0_20px_60px_rgba(0,0,0,0.6)]">
+
                 {/* Header */}
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px" }}>
-                    <h2 style={{ color: theme.text, margin: 0, fontSize: "20px", fontWeight: "800" }}>{habit ? "Edit Habit" : "New Habit ✨"}</h2>
-                    <button onClick={onClose} style={{ background: "none", border: "none", cursor: "pointer", color: theme.textSub, padding: "4px", display: "flex" }}>
-                        <X size={20} /></button>
+                <div className="flex justify-between items-center mb-6">
+                    <h2 className="text-[#1c2128] dark:text-[#e6edf3] m-0 text-xl font-extrabold">
+                        {habit ? "Edit Habit" : "New Habit ✨"}
+                    </h2>
+                    <button
+                        onClick={onClose}
+                        className="bg-transparent border-none cursor-pointer text-[#656d76] dark:text-[#8b949e] p-1 flex hover:text-[#1c2128] dark:hover:text-[#e6edf3] transition-colors"
+                    >
+                        <X size={20} />
+                    </button>
                 </div>
 
                 {/* Name */}
                 <Field label="Habit Name *">
-                    <Input theme={theme} value={form.name} onChange={(e) => set("name", e.target.value)} placeholder="e.g. Morning Run, Read 30 mins…" autoFocus />
+                    <Input
+                        value={form.name}
+                        onChange={(e) => set("name", e.target.value)}
+                        placeholder="e.g. Morning Run, Read 30 mins…"
+                        autoFocus
+                    />
                 </Field>
 
                 {/* Description */}
                 <Field label="Description">
-                    <textarea value={form.description} onChange={(e) => set("description", e.target.value)} placeholder="Optional notes…" rows={2}
-                        style={{ width: "100%", padding: "11px 14px", background: theme.bgInput, border: `1px solid ${theme.border}`, borderRadius: "10px", color: theme.text, fontSize: "14px", fontFamily: "inherit", outline: "none", resize: "vertical", boxSizing: "border-box" }}
-                        onFocus={(e) => (e.target.style.borderColor = "#7c3aed")} onBlur={(e) => (e.target.style.borderColor = theme.border)}
+                    <textarea
+                        value={form.description}
+                        onChange={(e) => set("description", e.target.value)}
+                        placeholder="Optional notes…"
+                        rows={2}
+                        className="w-full px-3.5 py-[11px] bg-[#f6f8fa] dark:bg-[#0d1117] border border-[#d0d7de] dark:border-[#30363d] rounded-[10px] text-[#1c2128] dark:text-[#e6edf3] text-sm font-sans outline-none resize-y box-border focus:border-violet-600 transition-colors"
                     />
                 </Field>
 
                 {/* Category */}
                 <Field label="Category">
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "8px" }}>
-                        {CATEGORIES.map((cat) => (
-                            <button key={cat.id} onClick={() => set("category", cat.id)}
-                                style={{ padding: "10px 4px", background: form.category === cat.id ? `${cat.color}22` : theme.bgInput, border: `1px solid ${form.category === cat.id ? cat.color : theme.border}`, borderRadius: "10px", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", gap: "3px", transition: "all 0.15s" }}>
-                                <span style={{ fontSize: "18px" }}>{cat.emoji}</span>
-                                <span style={{ fontSize: "10px", fontWeight: "700", color: form.category === cat.id ? cat.color : theme.textSub }}>{cat.label}</span>
-                            </button>
-                        ))}
+                    <div className="grid grid-cols-4 gap-2">
+                        {CATEGORIES.map((cat) => {
+                            const isActive = form.category === cat.id;
+                            return (
+                                <button
+                                    key={cat.id}
+                                    onClick={() => set("category", cat.id)}
+                                    className="py-2.5 px-1 rounded-[10px] cursor-pointer flex flex-col items-center gap-[3px] transition-all duration-150 font-sans border"
+                                    style={{
+                                        background:  isActive ? `${cat.color}22` : "",
+                                        borderColor: isActive ? cat.color : "",
+                                    }}
+                                    {...(!isActive && { className: "py-2.5 px-1 rounded-[10px] cursor-pointer flex flex-col items-center gap-[3px] transition-all duration-150 font-sans border bg-[#f6f8fa] dark:bg-[#0d1117] border-[#d0d7de] dark:border-[#30363d]" })}
+                                >
+                                    <span className="text-lg">{cat.emoji}</span>
+                                    <span
+                                        className="text-[10px] font-bold"
+                                        style={{ color: isActive ? cat.color : undefined }}
+                                        {...(!isActive && { className: "text-[10px] font-bold text-[#656d76] dark:text-[#8b949e]" })}
+                                    >
+                                        {cat.label}
+                                    </span>
+                                </button>
+                            );
+                        })}
                     </div>
                 </Field>
 
                 {/* Frequency */}
                 <Field label="Frequency">
-                    <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+                    <div className="flex gap-2 flex-wrap">
                         {["daily", "weekdays", "weekends", "custom"].map((f) => (
-                            <button key={f} onClick={() => set("frequency", f)}
-                                style={{ padding: "9px 16px", background: form.frequency === f ? "linear-gradient(135deg,#7c3aed,#6d28d9)" : theme.bgInput, border: `1px solid ${form.frequency === f ? "#7c3aed" : theme.border}`, borderRadius: "8px", color: form.frequency === f ? "#fff" : theme.textSub, cursor: "pointer", fontSize: "13px", fontWeight: "700", fontFamily: "inherit", transition: "all 0.15s", textTransform: "capitalize" }}>
+                            <button
+                                key={f}
+                                onClick={() => set("frequency", f)}
+                                className={`px-4 py-[9px] rounded-lg text-[13px] font-bold font-sans cursor-pointer transition-all duration-150 capitalize border ${
+                                    form.frequency === f
+                                        ? "gradient-brand text-white border-violet-600"
+                                        : "bg-[#f6f8fa] dark:bg-[#0d1117] border-[#d0d7de] dark:border-[#30363d] text-[#656d76] dark:text-[#8b949e]"
+                                }`}
+                            >
                                 {f}
                             </button>
                         ))}
                     </div>
+
                     {form.frequency === "custom" && (
-                        <div style={{ display: "flex", gap: "6px", marginTop: "10px" }}>
+                        <div className="flex gap-1.5 mt-2.5">
                             {WEEKDAY_LABELS.map((d, i) => (
-                                <button key={d} onClick={() => toggleDay(i)}
-                                    style={{ flex: 1, padding: "9px 0", background: form.customDays.includes(i) ? "linear-gradient(135deg,#7c3aed,#6d28d9)" : theme.bgInput, border: `1px solid ${form.customDays.includes(i) ? "#7c3aed" : theme.border}`, borderRadius: "7px", color: form.customDays.includes(i) ? "#fff" : theme.textSub, cursor: "pointer", fontSize: "11px", fontWeight: "800", fontFamily: "inherit" }}>
+                                <button
+                                    key={d}
+                                    onClick={() => toggleDay(i)}
+                                    className={`flex-1 py-[9px] rounded-[7px] text-[11px] font-extrabold font-sans cursor-pointer transition-all duration-150 border ${
+                                        form.customDays.includes(i)
+                                            ? "gradient-brand text-white border-violet-600"
+                                            : "bg-[#f6f8fa] dark:bg-[#0d1117] border-[#d0d7de] dark:border-[#30363d] text-[#656d76] dark:text-[#8b949e]"
+                                    }`}
+                                >
                                     {d}
                                 </button>
                             ))}
@@ -88,22 +141,36 @@ function HabitModal({ habit, onSave, onClose, theme }) {
                     )}
                 </Field>
 
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px" }}>
-                    {/* Start Date */}
+                {/* Start Date + Reminder */}
+                <div className="grid grid-cols-2 gap-3.5">
                     <Field label="Start Date">
-                        <Input theme={theme} type="date" value={form.startDate} onChange={(e) => set("startDate", e.target.value)} />
+                        <Input type="date" value={form.startDate} onChange={(e) => set("startDate", e.target.value)} />
                     </Field>
-                    {/* Reminder */}
                     <Field label="Reminder (optional)">
-                        <Input theme={theme} type="time" value={form.reminder} onChange={(e) => set("reminder", e.target.value)} />
+                        <Input type="time" value={form.reminder} onChange={(e) => set("reminder", e.target.value)} />
                     </Field>
                 </div>
 
-                {err && <div style={{ color: "#ef4444", fontSize: "13px", marginBottom: "16px", padding: "10px 12px", background: "rgba(239,68,68,.1)", borderRadius: "8px" }}>{err}</div>}
+                {/* Error */}
+                {err && (
+                    <div className="text-red-500 text-[13px] mb-4 px-3 py-2.5 bg-red-500/10 rounded-lg">
+                        {err}
+                    </div>
+                )}
 
-                <div style={{ display: "flex", gap: "10px", marginTop: "4px" }}>
-                    <button onClick={onClose} style={{ flex: 1, padding: "13px", background: "transparent", border: `1px solid ${theme.border}`, borderRadius: "12px", color: theme.textSub, cursor: "pointer", fontWeight: "600", fontFamily: "inherit", fontSize: "14px" }}>Cancel</button>
-                    <button onClick={save} style={{ flex: 2, padding: "13px", background: "linear-gradient(135deg,#7c3aed,#6d28d9)", border: "none", borderRadius: "12px", color: "#fff", cursor: "pointer", fontWeight: "800", fontFamily: "inherit", fontSize: "14px", boxShadow: "0 6px 20px rgba(124,58,237,.35)" }}>
+                {/* Actions */}
+                <div className="flex gap-2.5 mt-1">
+                    <button
+                        onClick={onClose}
+                        className="flex-1 py-[13px] bg-transparent border border-[#d0d7de] dark:border-[#30363d] rounded-xl text-[#656d76] dark:text-[#8b949e] cursor-pointer font-semibold font-sans text-sm hover:bg-[#f6f8fa] dark:hover:bg-[#21262d] transition-colors"
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        onClick={save}
+                        className="flex-[2] py-[13px] gradient-brand border-none rounded-xl text-white cursor-pointer font-extrabold font-sans text-sm"
+                        style={{ boxShadow: "0 6px 20px rgba(124,58,237,.35)" }}
+                    >
                         {habit ? "Save Changes" : "Create Habit"}
                     </button>
                 </div>

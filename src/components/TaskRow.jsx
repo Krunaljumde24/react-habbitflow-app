@@ -1,59 +1,55 @@
 import React from 'react'
 import { CATEGORIES } from '../constants/categories';
-import { Check, Tag } from 'lucide-react';
+import { Check } from 'lucide-react';
+import Tag from './ui/Tag';
 
-function TaskRow({ habit, done, onToggle, theme, readOnly = false }) {
+function TaskRow({ habit, done, onToggle, readOnly = false }) {
     const cat = CATEGORIES.find((c) => c.id === habit.category) ?? CATEGORIES[7];
+
     return (
         <div
             onClick={readOnly ? undefined : onToggle}
-            style={{
-                display: "flex", alignItems: "center", gap: "12px",
-                padding: "11px 14px", borderRadius: "10px",
-                cursor: readOnly ? "default" : "pointer",
-                transition: "background 0.15s", userSelect: "none",
-                background: done ? `${cat.color}10` : "transparent",
-            }}
-            onMouseEnter={(e) => { if (!readOnly) e.currentTarget.style.background = theme.bgHover; }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = done ? `${cat.color}10` : "transparent"; }}
+            className={`
+                flex items-center gap-3 px-3.5 py-[11px] rounded-[10px]
+                transition-colors duration-150 select-none
+                ${readOnly ? "cursor-default" : "cursor-pointer hover:bg-[#f6f8fa] dark:hover:bg-[#21262d]"}
+            `}
+            style={{ background: done ? `${cat.color}10` : "transparent" }}
         >
             {/* Square checkbox */}
-            <div style={{
-                width: "22px", height: "22px", borderRadius: "6px", flexShrink: 0,
-                border: `2px solid ${done ? cat.color : theme.border}`,
-                background: done ? cat.color : "transparent",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                transition: "all 0.18s",
-                opacity: readOnly ? 0.7 : 1,
-            }}>
+            <div
+                className="w-[22px] h-[22px] rounded-[6px] flex-shrink-0 flex items-center justify-center transition-all duration-[180ms]"
+                style={{
+                    border: `2px solid ${done ? cat.color : "#30363d"}`,
+                    background: done ? cat.color : "transparent",
+                    opacity: readOnly ? 0.7 : 1,
+                }}
+            >
                 {done && <Check size={12} color="#fff" strokeWidth={3} />}
             </div>
 
             {/* Category emoji */}
-            <span style={{ fontSize: "17px", lineHeight: 1, flexShrink: 0 }}>{cat.emoji}</span>
+            <span className="text-[17px] leading-none flex-shrink-0">{cat.emoji}</span>
 
             {/* Name + description */}
-            <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{
-                    color: done ? theme.textSub : theme.text, fontSize: "14px", fontWeight: "600",
-                    textDecoration: done ? "line-through" : "none",
-                    overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
-                }}>{habit.name}</div>
+            <div className="flex-1 min-w-0">
+                <div className={`text-sm font-semibold truncate ${done ? "text-[#656d76] dark:text-[#8b949e] line-through" : "text-[#1c2128] dark:text-[#e6edf3]"}`}>
+                    {habit.name}
+                </div>
                 {habit.description && (
-                    <div style={{ color: theme.textSub, fontSize: "11px", marginTop: "1px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    <div className="text-[#656d76] dark:text-[#8b949e] text-[11px] mt-px truncate">
                         {habit.description}
                     </div>
                 )}
             </div>
 
-            {/* Badge / status icon */}
-            <div style={{ display: "flex", alignItems: "center", gap: "6px", flexShrink: 0 }}>
+            {/* Badge / status */}
+            <div className="flex items-center gap-1.5 flex-shrink-0">
                 {!readOnly && <Tag color={cat.color}>{cat.label}</Tag>}
-                {readOnly && <span style={{ fontSize: "17px" }}>{done ? "✅" : "❌"}</span>}
+                {readOnly && <span className="text-[17px]">{done ? "✅" : "❌"}</span>}
             </div>
         </div>
     );
 }
-
 
 export default TaskRow
