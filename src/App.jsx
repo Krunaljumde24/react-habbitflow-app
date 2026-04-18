@@ -21,6 +21,7 @@ import { uid, store, hashPw } from "./utils/commonUtils";
 import Dashboard from "./components/Dashboard";
 
 import "./App.css";
+import { Toaster } from "react-hot-toast";
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -29,6 +30,7 @@ export default function App() {
   const [darkMode, setDarkMode] = useState(true);
   const [view, setView] = useState("dashboard");
   const [modal, setModal] = useState(null); // null | "new" | habitObj
+
   const [isMobile, setMobile] = useState(window.innerWidth < 768);
 
   /* ─── Apply dark class to <html> ─────────────────── */
@@ -73,7 +75,10 @@ export default function App() {
   }, []);
 
   /* ─── Auth ───────────────────────────────────────── */
-  const handleAuth = (u) => { setUser(u); loadData(u.id); };
+  const handleAuth = (u) => {
+    setUser(u);
+    loadData(u.id);
+  };
   const handleLogout = () => { store.remove("currentUser"); setUser(null); setHabits([]); setLogs([]); };
   const toggleDark = () => setDarkMode((d) => { store.set("darkMode", !d); return !d; });
 
@@ -124,7 +129,6 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#f0f2f5] dark:bg-[#0d1117] text-[#1c2128] dark:text-[#e6edf3] font-sans">
-
       {!isMobile && (
         <Sidebar active={view} setActive={setView} darkMode={darkMode} onToggleDark={toggleDark} user={user} />
       )}
@@ -132,7 +136,7 @@ export default function App() {
       <main className={
         isMobile
           ? "px-4 pt-5 pb-24"
-          : "ml-56 p-9 max-w-[840px]"
+          : "ml-56 p-9 max-w-210"
       }>
         {views[view] ?? null}
       </main>

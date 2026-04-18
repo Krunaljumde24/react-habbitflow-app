@@ -12,7 +12,7 @@ const fmtDate = (d = new Date()) => {
 const todayStr = () => fmtDate(new Date());
 
 /** Tiny unique id */
-const uid = () => Math.random().toString(36).slice(2) + Date.now().toString(36);
+const uid = () => Math.random().toString(36).slice(2) + Da+te.now().toString(36);
 
 /** Simple password hashing (use bcrypt on real backend) */
 const hashPw = (pw) => btoa(encodeURIComponent(pw + "__hf_salt__"));

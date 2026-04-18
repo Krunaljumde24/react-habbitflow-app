@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { use } from 'react'
 import {
     Home, List, Calendar, BarChart2, Settings,
     Sun, Moon,
@@ -13,13 +13,16 @@ const NAV = [
 ];
 
 function Sidebar({ active, setActive, darkMode, onToggleDark, user }) {
+    console.log(user);
+
+
     return (
         <div className="w-56 bg-white dark:bg-[#161b22] border-r border-[#d0d7de] dark:border-[#30363d] flex flex-col h-screen fixed left-0 top-0 z-[100]">
 
             {/* Logo */}
             <div className="px-4 py-5 border-b border-[#d0d7de] dark:border-[#30363d]">
                 <div className="flex items-center gap-2.5">
-                    <div className="w-[38px] h-[38px] gradient-logo rounded-xl flex items-center justify-center text-lg shadow-logo flex-shrink-0">
+                    <div className="w-9.5 h-9.5 gradient-logo rounded-xl flex items-center justify-center text-lg shadow-logo flex-shrink-0">
                         🔥
                     </div>
                     <div>

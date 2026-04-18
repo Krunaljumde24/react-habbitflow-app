@@ -1,12 +1,18 @@
 import { useState } from "react";
 import { signUp } from "../service/AuthService";
 import { store } from "../utils/commonUtils";
+import toast from "react-hot-toast";
 
 export default function SignUp({ onAuth, error, setError, loading, setLoading }) {
 
     const inputCls = "w-full px-3.5 py-3 bg-[#0d1117] border border-[#30363d] rounded-[10px] text-[#e6edf3] text-sm font-sans outline-none box-border focus:border-violet-600 transition-colors";
 
-    const [form, setForm] = useState({ name: "", email: "", password: "" });
+    const [form, setForm] = useState(
+        {
+            name: "",
+            email: "",
+            password: ""
+        });
 
     const handle = (field) => (e) => setForm((f) => ({ ...f, [field]: e.target.value }));
 
@@ -14,22 +20,36 @@ export default function SignUp({ onAuth, error, setError, loading, setLoading })
         e.preventDefault();
         setError("");
         setLoading(true);
+
         setTimeout(() => {
-            const users = store.get("users") || [];
-            if (isLogin) {
-                const u = users.find((u) => u.email === form.email && u.passwordHash === hashPw(form.password));
-                if (!u) { setError("Invalid email or password."); setLoading(false); return; }
-                const { passwordHash: _, ...safe } = u;
-                store.set("currentUser", safe);
-                onAuth(safe);
+
+            if (!form.email?.trim() || !form.name?.trim() || !form.password?.trim()) {
+                setError("Invalid name, email or password.");
             } else {
-                if (users.find((u) => u.email === form.email)) { setError("Email already in use."); setLoading(false); return; }
-                const nu = { id: crypto.randomUUID?.() ?? Math.random().toString(36).slice(2), name: form.name, email: form.email, passwordHash: hashPw(form.password), createdAt: new Date().toISOString() };
-                store.set("users", [...users, nu]);
-                const { passwordHash: _, ...safe } = nu;
-                store.set("currentUser", safe);
-                onAuth(safe);
+
+                signUp(form)
+
             }
+
+            setLoading(false);
+
+            // signUp(form);
+
+            // const users = store.get("users") || [];
+            // if (isLogin) {
+            //     const u = users.find((u) => u.email === form.email && u.passwordHash === hashPw(form.password));
+            //     if (!u) { setError("Invalid email or password."); setLoading(false); return; }
+            //     const { passwordHash: _, ...safe } = u;
+            //     store.set("currentUser", safe);
+            //     onAuth(safe);
+            // } else {
+            //     if (users.find((u) => u.email === form.email)) { setError("Email already in use."); setLoading(false); return; }
+            //     const nu = { id: crypto.randomUUID?.() ?? Math.random().toString(36).slice(2), name: form.name, email: form.email, passwordHash: hashPw(form.password), createdAt: new Date().toISOString() };
+            //     store.set("users", [...users, nu]);
+            //     const { passwordHash: _, ...safe } = nu;
+            //     store.set("currentUser", safe);
+            //     onAuth(safe);
+            // }
         }, 450);
     };
 

@@ -8,13 +8,13 @@ import { WEEKDAY_LABELS } from '../constants/weekLabes';
 
 function HabitModal({ habit, onSave, onClose }) {
     const [form, setForm] = useState({
-        name:        habit?.name        ?? "",
+        name: habit?.name ?? "",
         description: habit?.description ?? "",
-        category:    habit?.category    ?? "health",
-        frequency:   habit?.frequency   ?? "daily",
-        customDays:  habit?.customDays  ?? [],
-        startDate:   habit?.startDate   ?? todayStr(),
-        reminder:    habit?.reminder    ?? "",
+        category: habit?.category ?? "health",
+        frequency: habit?.frequency ?? "daily",
+        customDays: habit?.customDays ?? [],
+        startDate: habit?.startDate ?? todayStr(),
+        reminder: habit?.reminder ?? "",
     });
     const [err, setErr] = useState("");
 
@@ -34,11 +34,11 @@ function HabitModal({ habit, onSave, onClose }) {
     return (
         /* Overlay */
         <div
-            className="fixed inset-0 bg-black/75 z-[1000] flex items-center justify-center p-4 backdrop-blur-[6px]"
+            className="fixed inset-0 bg-black/75 z-1000 flex items-center justify-center p-4 backdrop-blur-[6px]"
             onClick={(e) => e.target === e.currentTarget && onClose()}
         >
             {/* Modal panel */}
-            <div className="bg-white dark:bg-[#161b22] border border-[#d0d7de] dark:border-[#30363d] rounded-[20px] p-7 w-full max-w-[500px] max-h-[92vh] overflow-y-auto shadow-[0_20px_60px_rgba(0,0,0,0.6)]">
+            <div className="bg-white dark:bg-[#161b22] border border-[#d0d7de] dark:border-[#30363d] rounded-[20px] p-7 w-full max-w-125 max-h-[92vh] overflow-y-auto shadow-[0_20px_60px_rgba(0,0,0,0.6)]">
 
                 {/* Header */}
                 <div className="flex justify-between items-center mb-6">
@@ -70,7 +70,7 @@ function HabitModal({ habit, onSave, onClose }) {
                         onChange={(e) => set("description", e.target.value)}
                         placeholder="Optional notes…"
                         rows={2}
-                        className="w-full px-3.5 py-[11px] bg-[#f6f8fa] dark:bg-[#0d1117] border border-[#d0d7de] dark:border-[#30363d] rounded-[10px] text-[#1c2128] dark:text-[#e6edf3] text-sm font-sans outline-none resize-y box-border focus:border-violet-600 transition-colors"
+                        className="w-full px-3.5 py-2.75 bg-[#f6f8fa] dark:bg-[#0d1117] border border-[#d0d7de] dark:border-[#30363d] rounded-[10px] text-[#1c2128] dark:text-[#e6edf3] text-sm font-sans outline-none resize-y box-border focus:border-violet-600 transition-colors"
                     />
                 </Field>
 
@@ -85,7 +85,7 @@ function HabitModal({ habit, onSave, onClose }) {
                                     onClick={() => set("category", cat.id)}
                                     className="py-2.5 px-1 rounded-[10px] cursor-pointer flex flex-col items-center gap-[3px] transition-all duration-150 font-sans border"
                                     style={{
-                                        background:  isActive ? `${cat.color}22` : "",
+                                        background: isActive ? `${cat.color}22` : "",
                                         borderColor: isActive ? cat.color : "",
                                     }}
                                     {...(!isActive && { className: "py-2.5 px-1 rounded-[10px] cursor-pointer flex flex-col items-center gap-[3px] transition-all duration-150 font-sans border bg-[#f6f8fa] dark:bg-[#0d1117] border-[#d0d7de] dark:border-[#30363d]" })}
@@ -111,11 +111,10 @@ function HabitModal({ habit, onSave, onClose }) {
                             <button
                                 key={f}
                                 onClick={() => set("frequency", f)}
-                                className={`px-4 py-[9px] rounded-lg text-[13px] font-bold font-sans cursor-pointer transition-all duration-150 capitalize border ${
-                                    form.frequency === f
+                                className={`px-4 py-[9px] rounded-lg text-[13px] font-bold font-sans cursor-pointer transition-all duration-150 capitalize border ${form.frequency === f
                                         ? "gradient-brand text-white border-violet-600"
                                         : "bg-[#f6f8fa] dark:bg-[#0d1117] border-[#d0d7de] dark:border-[#30363d] text-[#656d76] dark:text-[#8b949e]"
-                                }`}
+                                    }`}
                             >
                                 {f}
                             </button>
@@ -128,11 +127,10 @@ function HabitModal({ habit, onSave, onClose }) {
                                 <button
                                     key={d}
                                     onClick={() => toggleDay(i)}
-                                    className={`flex-1 py-[9px] rounded-[7px] text-[11px] font-extrabold font-sans cursor-pointer transition-all duration-150 border ${
-                                        form.customDays.includes(i)
+                                    className={`flex-1 py-[9px] rounded-[7px] text-[11px] font-extrabold font-sans cursor-pointer transition-all duration-150 border ${form.customDays.includes(i)
                                             ? "gradient-brand text-white border-violet-600"
                                             : "bg-[#f6f8fa] dark:bg-[#0d1117] border-[#d0d7de] dark:border-[#30363d] text-[#656d76] dark:text-[#8b949e]"
-                                    }`}
+                                        }`}
                                 >
                                     {d}
                                 </button>

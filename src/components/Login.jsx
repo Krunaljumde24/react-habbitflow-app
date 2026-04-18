@@ -1,48 +1,64 @@
 import { useState } from "react";
 import { hashPw, store } from "../utils/commonUtils";
+import { login } from "../service/AuthService";
+import toast from "react-hot-toast";
+import { LogIn } from "lucide-react";
 
-export default function Login({ onAuth, form, setForm, handle, error, setError, loading, setLoading }) {
+export default function Login({ onAuth, error, setError, loading, setLoading }) {
 
     const [isLogin, setIsLogin] = useState(true);
 
+    const [user, setUser] = useState({
+        email: '',
+        password: ''
+    })
+
     const inputCls = "w-full px-3.5 py-3 bg-[#0d1117] border border-[#30363d] rounded-[10px] text-[#e6edf3] text-sm font-sans outline-none box-border focus:border-violet-600 transition-colors";
 
-
-    const submit = () => {
+    const submit = async () => {
         setError(""); setLoading(true);
-        setTimeout(() => {
-            const users = store.get("users") || [];
-            if (isLogin) {
-                const u = users.find((u) => u.email === form.email && u.passwordHash === hashPw(form.password));
-                if (!u) { setError("Invalid email or password."); setLoading(false); return; }
-                const { passwordHash: _, ...safe } = u;
-                store.set("currentUser", safe);
-                onAuth(safe);
-            } else {
-                if (!form.name || !form.email || !form.password) { setError("All fields are required."); setLoading(false); return; }
-                if (users.find((u) => u.email === form.email)) { setError("Email already in use."); setLoading(false); return; }
-                const nu = { id: crypto.randomUUID?.() ?? Math.random().toString(36).slice(2), name: form.name, email: form.email, passwordHash: hashPw(form.password), createdAt: new Date().toISOString() };
-                store.set("users", [...users, nu]);
-                const { passwordHash: _, ...safe } = nu;
-                store.set("currentUser", safe);
-                onAuth(safe);
+        const status = await login(user);
+        console.log(status);
+        
+        if (status) {
+            toast.success('Login Successful.')
+
+
+            let safe = {
+                "id": "0afac0e9-b9c7-4a27-9bea-6c2f66e317c6",
+                "name": "Krunal Jumde",
+                "email": "Krunal@habitflow.com",
+                "createdAt": "2026-04-17T05:26:52.799Z"
             }
+            store.set("currentUser", safe);
+            onAuth(safe)
+        } else {
+            toast.error('Invalid username or password');
+            setError("Invalid email or password.");
             setLoading(false);
-        }, 450);
-    };
+            return;
+        }
+
+    }
     return (
         <div>
             <div className="mb-4">
                 <label className="block text-[#8b949e] text-xs font-semibold mb-1.5 uppercase tracking-wide">Email</label>
-                <input className={inputCls} value={form.email} onChange={handle("email")} placeholder="you@example.com" type="email" />
+                <input
+                    className={inputCls}
+                    value={user.email}
+                    onChange={(e) => setUser((prev) => ({ ...prev, email: e.target.value }))}
+                    placeholder="you@example.com"
+                    type="email"
+                />
             </div>
 
             <div className={error ? "mb-3.5" : "mb-6"}>
                 <label className="block text-[#8b949e] text-xs font-semibold mb-1.5 uppercase tracking-wide">Password</label>
                 <input
                     className={inputCls}
-                    value={form.password}
-                    onChange={handle("password")}
+                    value={user.password}
+                    onChange={(e) => setUser((prev) => ({ ...prev, password: e.target.value }))}
                     placeholder="••••••••"
                     type="password"
                     onKeyDown={(e) => e.key === "Enter" && submit()}
