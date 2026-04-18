@@ -83,7 +83,7 @@ function HabitModal({ habit, onSave, onClose }) {
                                 <button
                                     key={cat.id}
                                     onClick={() => set("category", cat.id)}
-                                    className="py-2.5 px-1 rounded-[10px] cursor-pointer flex flex-col items-center gap-[3px] transition-all duration-150 font-sans border"
+                                    className="py-2.5 px-1 rounded-[10px] cursor-pointer flex flex-col items-center gap-0.75 transition-all duration-150 font-sans border"
                                     style={{
                                         background: isActive ? `${cat.color}22` : "",
                                         borderColor: isActive ? cat.color : "",
@@ -111,7 +111,7 @@ function HabitModal({ habit, onSave, onClose }) {
                             <button
                                 key={f}
                                 onClick={() => set("frequency", f)}
-                                className={`px-4 py-[9px] rounded-lg text-[13px] font-bold font-sans cursor-pointer transition-all duration-150 capitalize border ${form.frequency === f
+                                className={`px-4 py-2.25 rounded-lg text-[13px] font-bold font-sans cursor-pointer transition-all duration-150 capitalize border ${form.frequency === f
                                         ? "gradient-brand text-white border-violet-600"
                                         : "bg-[#f6f8fa] dark:bg-[#0d1117] border-[#d0d7de] dark:border-[#30363d] text-[#656d76] dark:text-[#8b949e]"
                                     }`}
@@ -127,7 +127,7 @@ function HabitModal({ habit, onSave, onClose }) {
                                 <button
                                     key={d}
                                     onClick={() => toggleDay(i)}
-                                    className={`flex-1 py-[9px] rounded-[7px] text-[11px] font-extrabold font-sans cursor-pointer transition-all duration-150 border ${form.customDays.includes(i)
+                                    className={`flex-1 py-2.25 rounded-[7px] text-[11px] font-extrabold font-sans cursor-pointer transition-all duration-150 border ${form.customDays.includes(i)
                                             ? "gradient-brand text-white border-violet-600"
                                             : "bg-[#f6f8fa] dark:bg-[#0d1117] border-[#d0d7de] dark:border-[#30363d] text-[#656d76] dark:text-[#8b949e]"
                                         }`}
@@ -160,13 +160,13 @@ function HabitModal({ habit, onSave, onClose }) {
                 <div className="flex gap-2.5 mt-1">
                     <button
                         onClick={onClose}
-                        className="flex-1 py-[13px] bg-transparent border border-[#d0d7de] dark:border-[#30363d] rounded-xl text-[#656d76] dark:text-[#8b949e] cursor-pointer font-semibold font-sans text-sm hover:bg-[#f6f8fa] dark:hover:bg-[#21262d] transition-colors"
+                        className="flex-1 py-3.25 bg-transparent border border-[#d0d7de] dark:border-[#30363d] rounded-xl text-[#656d76] dark:text-[#8b949e] cursor-pointer font-semibold font-sans text-sm hover:bg-[#f6f8fa] dark:hover:bg-[#21262d] transition-colors"
                     >
                         Cancel
                     </button>
                     <button
                         onClick={save}
-                        className="flex-[2] py-[13px] gradient-brand border-none rounded-xl text-white cursor-pointer font-extrabold font-sans text-sm"
+                        className="flex-2 py-3.25 gradient-brand border-none rounded-xl text-white cursor-pointer font-extrabold font-sans text-sm"
                         style={{ boxShadow: "0 6px 20px rgba(124,58,237,.35)" }}
                     >
                         {habit ? "Save Changes" : "Create Habit"}

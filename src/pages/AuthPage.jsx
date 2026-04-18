@@ -4,7 +4,7 @@ import Login from "../components/Login.jsx"
 import SignUp from "../components/SignUp.jsx"
 
 
-function AuthPage({ onAuth }) {
+function AuthPage() {
 
     const [isLogin, setIsLogin] = useState(true);
     const [form, setForm] = useState({ name: "", email: "", password: "" });
@@ -82,7 +82,6 @@ function AuthPage({ onAuth }) {
                         setError={setError}
                         loading={loading}
                         setLoading={setLoading}
-                        onAuth={onAuth}
                     /> : <SignUp
                         form={form}
                         serForm={setForm}
@@ -91,7 +90,6 @@ function AuthPage({ onAuth }) {
                         setError={setError}
                         loading={loading}
                         setLoading={setLoading}
-                        onAuth={onAuth}
                     />}
 
                     {/* Demo credentials */}

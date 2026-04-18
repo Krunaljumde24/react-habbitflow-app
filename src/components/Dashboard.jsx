@@ -1,14 +1,47 @@
-import React from 'react'
-import { todayStr, isHabitDue, calcGlobalStreak } from "../utils/commonUtils"
+import React, { useCallback, useContext, useEffect, useState } from 'react'
+import { todayStr, isHabitDue, calcGlobalStreak, store } from "../utils/commonUtils"
 import Card from './ui/Card';
 import { Plus } from 'lucide-react';
 import TaskRow from "../components/TaskRow"
+import { AuthContext } from '../context/AuthContext';
 
-function Dashboard({ habits, logs, user, onToggle, onAddHabit }) {
+function Dashboard({ onAddHabit }) {
+
+    const [user, setUser] = useState(null)
+    const [habits, setHabits] = useState([]);
+    const [logs, setLogs] = useState([]);
+
+    const [loading, setLoading] = useState(true)
+
+    const loadData = useCallback(() => {
+        // setHabits((store.get("habits") ?? []).filter((h) => h.userId === userId));
+        // setLogs((store.get("habitLogs") ?? []).filter((l) => l.userId === userId));
+        const data = store.get("currentUser");
+        // console.log(data);
+        // console.log(data.user);
+
+        setUser(data.user)
+
+        // if (u) {
+        //     setUser(u); loadData(u.id);
+        // }
+    }, []);
+
+    /* ─── Log toggle ─────────────────────────────────── */
+    // const toggleLog = useCallback((habitId, dateStr) => {
+    //     const all = store.get("habitLogs") ?? [];
+    //     const idx = all.findIndex((l) => l.habitId === habitId && l.date === dateStr && l.userId === user.id);
+    //     const updated = idx >= 0
+    //         ? all.map((l, i) => i === idx ? { ...l, completed: !l.completed } : l)
+    //         : [...all, { id: uid(), habitId, date: dateStr, completed: true, userId: user.id }];
+    //     store.set("habitLogs", updated);
+    //     setLogs(updated.filter((l) => l.userId === user.id));
+    // }, [user]);
+
     const today = todayStr();
     const dueToday = habits.filter((h) => isHabitDue(h, today));
     const doneToday = dueToday.filter((h) => logs.some((l) => l.habitId === h.id && l.date === today && l.completed));
-    const pending = dueToday.filter((h) => !logs.some((l) => l.habitId === h.id && l.date === today && l.completed));
+    // const pending = dueToday.filter((h) => !logs.some((l) => l.habitId === h.id && l.date === today && l.completed));
     const rate = dueToday.length ? Math.round((doneToday.length / dueToday.length) * 100) : 0;
     const { current: streak } = calcGlobalStreak(habits, logs);
 
@@ -17,22 +50,32 @@ function Dashboard({ habits, logs, user, onToggle, onAddHabit }) {
     const greet = hr < 12 ? "Good morning" : hr < 17 ? "Good afternoon" : "Good evening";
     const dateLabel = now.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
 
+    useEffect(() => {
+        // Restore session
+
+        loadData();
+        setLoading(false)
+
+    }, [])
+
+    if (loading) return <h1>Loading...</h1>
+
     return (
         <div>
             {/* Greeting */}
-            <p className="text-[#656d76] dark:text-[#8b949e] text-sm mb-1">{dateLabel}</p>
+            <p className="text-[#656d76] dark:text-[#505e6d] text-sm mb-1">{dateLabel}</p>
             <h1 className="text-[#1c2128] dark:text-[#e6edf3] text-[28px] font-extrabold mb-6 tracking-tight">
                 {greet}, {user.name.split(" ")[0]} 👋
             </h1>
 
             {/* Stats row */}
-            <div className="grid grid-cols-3 gap-3 mb-[18px]">
+            <div className="grid grid-cols-3 gap-3 mb-4.5">
                 {[
                     { icon: "✅", val: `${doneToday.length}/${dueToday.length}`, label: "Today" },
                     { icon: "📊", val: `${rate}%`, label: "Completion" },
                     { icon: "🔥", val: `${streak}d`, label: "Streak" },
                 ].map((s) => (
-                    <Card key={s.label} className="!p-4 text-center">
+                    <Card key={s.label} className="p-4! text-center">
                         <div className="text-[22px] mb-1">{s.icon}</div>
                         <div className="text-violet-500 text-[22px] font-extrabold leading-none">{s.val}</div>
                         <div className="text-[#656d76] dark:text-[#8b949e] text-[11px] mt-1 font-semibold">{s.label}</div>
@@ -42,7 +85,7 @@ function Dashboard({ habits, logs, user, onToggle, onAddHabit }) {
 
             {/* Progress bar */}
             {dueToday.length > 0 && (
-                <Card className="!px-[18px] !py-3.5 mb-5">
+                <Card className="px-4.5! py-3.5! mb-5">
                     <div className="flex justify-between mb-2">
                         <span className="text-[#656d76] dark:text-[#8b949e] text-[13px] font-semibold">Daily Progress</span>
                         <span className={`text-[13px] font-extrabold ${rate === 100 ? "text-green-500" : "text-[#1c2128] dark:text-[#e6edf3]"}`}>
@@ -51,7 +94,7 @@ function Dashboard({ habits, logs, user, onToggle, onAddHabit }) {
                     </div>
                     <div className="bg-[#f6f8fa] dark:bg-[#21262d] rounded-full h-2 overflow-hidden">
                         <div
-                            className={`h-full rounded-full transition-[width] duration-[600ms] ease-[cubic-bezier(.4,0,.2,1)] ${rate === 100 ? "gradient-success" : "gradient-progress"}`}
+                            className={`h-full rounded-full transition-[width] duration-600 ease-in-out ${rate === 100 ? "gradient-success" : "gradient-progress"}`}
                             style={{ width: `${rate}%` }}
                         />
                     </div>
@@ -68,7 +111,7 @@ function Dashboard({ habits, logs, user, onToggle, onAddHabit }) {
                 <h2 className="text-[#1c2128] dark:text-[#e6edf3] text-base font-extrabold m-0">Today's Tasks</h2>
                 <button
                     onClick={onAddHabit}
-                    className="flex items-center gap-1.5 px-3 py-[7px] gradient-brand border-none rounded-lg text-white text-xs font-bold cursor-pointer font-sans"
+                    className="flex items-center gap-1.5 px-3 py-1.75 gradient-brand border-none rounded-lg text-white text-xs font-bold cursor-pointer font-sans"
                 >
                     <Plus size={13} /> Add
                 </button>
@@ -80,7 +123,7 @@ function Dashboard({ habits, logs, user, onToggle, onAddHabit }) {
                     <p className="text-[#656d76] dark:text-[#8b949e] m-0 text-[15px]">No habits today — create your first one!</p>
                 </div>
             ) : (
-                <Card className="!p-1.5">
+                <Card className="p-1.5!">
                     {/* Pending section */}
                     {pending.length > 0 && (
                         <>
@@ -91,7 +134,11 @@ function Dashboard({ habits, logs, user, onToggle, onAddHabit }) {
                                 </span>
                             </div>
                             {pending.map((h) => (
-                                <TaskRow key={h.id} habit={h} done={false} onToggle={() => onToggle(h.id, today)} />
+                                <TaskRow
+                                    key={h.id}
+                                    habit={h}
+                                    done={false}
+                                    onToggle={() => toggleLog(h.id, today)} />
                             ))}
                         </>
                     )}
@@ -117,6 +164,10 @@ function Dashboard({ habits, logs, user, onToggle, onAddHabit }) {
                     )}
                 </Card>
             )}
+
+
+
+
         </div>
     );
 }

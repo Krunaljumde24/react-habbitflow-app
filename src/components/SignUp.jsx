@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { signUp } from "../service/AuthService";
+// import { signUp } from "../service/AuthService";
 import { store } from "../utils/commonUtils";
 import toast from "react-hot-toast";
 

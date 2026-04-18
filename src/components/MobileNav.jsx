@@ -1,4 +1,6 @@
 import { BarChart2, Calendar, Home, List, Settings } from "lucide-react";
+import { useContext, useEffect } from "react";
+import { AuthContext } from "../context/AuthContext";
 
 const NAV = [
     { id: "dashboard", Icon: Home, label: "Dashboard" },
@@ -8,16 +10,25 @@ const NAV = [
     { id: "settings", Icon: Settings, label: "Settings" },
 ];
 
-function MobileNav({ active, setActive }) {
+
+function MobileNav() {
+
+
+    const { view, setView } = useContext(AuthContext)
+
+    useEffect(() => {
+        console.log('View : ' + view);
+
+    }, [view])
     return (
-        <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-[#161b22] border-t border-[#d0d7de] dark:border-[#30363d] flex z-[100] pb-[env(safe-area-inset-bottom,0px)]">
+        <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-[#161b22] border-t border-[#d0d7de] dark:border-[#30363d] flex z-100 pb-[env(safe-area-inset-bottom,0px)]">
             {NAV.map(({ id, Icon: Ic, label }) => {
-                const on = active === id;
+                const on = view === id;
                 return (
                     <button
                         key={id}
-                        onClick={() => setActive(id)}
-                        className="flex-1 py-2.5 px-1 flex flex-col items-center gap-[3px] bg-transparent border-none cursor-pointer font-sans transition-all duration-150"
+                        onClick={() => setView(id)}
+                        className="flex-1 py-2.5 px-1 flex flex-col items-center gap-0.75 bg-transparent border-none cursor-pointer font-sans transition-all duration-150"
                     >
                         <Ic size={20} color={on ? "#8b5cf6" : "#8b949e"} />
                         <span className={`text-[10px] ${on ? "text-violet-500 font-bold" : "text-[#8b949e] dark:text-[#8b949e] font-medium"}`}>
