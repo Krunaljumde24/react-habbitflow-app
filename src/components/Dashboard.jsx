@@ -4,59 +4,48 @@ import Card from './ui/Card';
 import { Plus } from 'lucide-react';
 import TaskRow from "../components/TaskRow"
 import { AuthContext } from '../context/AuthContext';
+import { getHabbitsByUserId } from '../service/AppService'
+import { AppContext } from '../context/AppContext';
 
-function Dashboard({ onAddHabit }) {
+function Dashboard() {
 
-    const [user, setUser] = useState(null)
+    const [user, setUser] = useState({ name: 'test' })
     const [habits, setHabits] = useState([]);
     const [logs, setLogs] = useState([]);
 
     const [loading, setLoading] = useState(true)
-
-    const loadData = useCallback(() => {
-        // setHabits((store.get("habits") ?? []).filter((h) => h.userId === userId));
-        // setLogs((store.get("habitLogs") ?? []).filter((l) => l.userId === userId));
-        const data = store.get("currentUser");
-        // console.log(data);
-        // console.log(data.user);
-
-        setUser(data.user)
-
-        // if (u) {
-        //     setUser(u); loadData(u.id);
-        // }
-    }, []);
-
-    /* ─── Log toggle ─────────────────────────────────── */
-    // const toggleLog = useCallback((habitId, dateStr) => {
-    //     const all = store.get("habitLogs") ?? [];
-    //     const idx = all.findIndex((l) => l.habitId === habitId && l.date === dateStr && l.userId === user.id);
-    //     const updated = idx >= 0
-    //         ? all.map((l, i) => i === idx ? { ...l, completed: !l.completed } : l)
-    //         : [...all, { id: uid(), habitId, date: dateStr, completed: true, userId: user.id }];
-    //     store.set("habitLogs", updated);
-    //     setLogs(updated.filter((l) => l.userId === user.id));
-    // }, [user]);
+    const { loggedInUser } = useContext(AuthContext)
+    const { setHabbits } = useContext(AppContext)
 
     const today = todayStr();
     const dueToday = habits.filter((h) => isHabitDue(h, today));
     const doneToday = dueToday.filter((h) => logs.some((l) => l.habitId === h.id && l.date === today && l.completed));
-    // const pending = dueToday.filter((h) => !logs.some((l) => l.habitId === h.id && l.date === today && l.completed));
+    const pending = dueToday.filter((h) => !logs.some((l) => l.habitId === h.id && l.date === today && l.completed));
     const rate = dueToday.length ? Math.round((doneToday.length / dueToday.length) * 100) : 0;
     const { current: streak } = calcGlobalStreak(habits, logs);
-
     const now = new Date();
     const hr = now.getHours();
     const greet = hr < 12 ? "Good morning" : hr < 17 ? "Good afternoon" : "Good evening";
     const dateLabel = now.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
 
+
+    const loadData = async () => {
+        let userId = loggedInUser.user.id;
+        const data = await getHabbitsByUserId(userId)
+        setHabits(data)
+        setHabbits(data)
+    }
+
     useEffect(() => {
         // Restore session
-
         loadData();
         setLoading(false)
 
     }, [])
+
+    const onAddHabit = () => {
+
+    }
 
     if (loading) return <h1>Loading...</h1>
 
@@ -108,7 +97,9 @@ function Dashboard({ onAddHabit }) {
 
             {/* Task list header */}
             <div className="flex justify-between items-center mb-3">
-                <h2 className="text-[#1c2128] dark:text-[#e6edf3] text-base font-extrabold m-0">Today's Tasks</h2>
+                <h2 className="text-[#1c2128] dark:text-[#e6edf3] text-base font-extrabold m-0">
+                    Today's Tasks
+                </h2>
                 <button
                     onClick={onAddHabit}
                     className="flex items-center gap-1.5 px-3 py-1.75 gradient-brand border-none rounded-lg text-white text-xs font-bold cursor-pointer font-sans"
@@ -137,8 +128,9 @@ function Dashboard({ onAddHabit }) {
                                 <TaskRow
                                     key={h.id}
                                     habit={h}
-                                    done={false}
-                                    onToggle={() => toggleLog(h.id, today)} />
+                                    // done={false}
+                                    // onToggle={() => toggleLog(h.id, today)}
+                                />
                             ))}
                         </>
                     )}

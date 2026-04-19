@@ -4,6 +4,7 @@ import './index.css'
 import App from "./App.jsx"
 import toast, { Toaster } from 'react-hot-toast'
 import { AuthProvider } from './context/AuthContext.jsx'
+import { AppProvider } from "./context/AppContext.jsx"
 import { createBrowserRouter, RouterProvider } from 'react-router'
 import Dashboard from './components/Dashboard.jsx'
 import Test from './components/Test.jsx'
@@ -52,7 +53,9 @@ const router = createBrowserRouter([
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <AuthProvider>
-      <RouterProvider router={router} />
+      <AppProvider>
+        <RouterProvider router={router} />
+      </AppProvider>
     </AuthProvider>
   </StrictMode>,
 )

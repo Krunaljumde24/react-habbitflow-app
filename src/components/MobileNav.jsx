@@ -13,13 +13,8 @@ const NAV = [
 
 function MobileNav() {
 
-
     const { view, setView } = useContext(AuthContext)
 
-    useEffect(() => {
-        console.log('View : ' + view);
-
-    }, [view])
     return (
         <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-[#161b22] border-t border-[#d0d7de] dark:border-[#30363d] flex z-100 pb-[env(safe-area-inset-bottom,0px)]">
             {NAV.map(({ id, Icon: Ic, label }) => {

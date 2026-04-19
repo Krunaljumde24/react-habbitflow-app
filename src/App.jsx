@@ -1,5 +1,5 @@
 import React, { use, useCallback, useContext, useEffect, useState } from 'react'
-import Dashboard from './components/Dashboard';
+// import Dashboard from './components/Dashboard';
 import HabitsPage from './pages/HabitsPage';
 import CalendarPage from './pages/CalendarPage';
 import AnalyticsPage from './pages/AnalyticsPage';

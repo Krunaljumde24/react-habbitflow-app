@@ -1,9 +1,16 @@
-import React, { useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Card from '../components/ui/Card';
 import { Download, LogOut, Moon, Sun } from 'lucide-react';
+import { AuthContext } from '../context/AuthContext.jsx'
+import { AppContext } from '../context/AppContext';
+import { getInitials } from '../utils/commonUtils.js';
 
-function SettingsPage({ user, darkMode, onToggleDark, onLogout, habits, logs }) {
+function SettingsPage() {
     const [msg, setMsg] = useState("");
+    const { habbits, logs } = useContext(AppContext)
+    const { loggedInUser, logoutContext } = useContext(AuthContext)
+    const [user, setUser] = useState(loggedInUser.user)
+    const [darkMode, setDarkMode] = useState(true)
 
     const download = (content, filename, type) => {
         const a = Object.assign(document.createElement("a"), {
@@ -15,7 +22,7 @@ function SettingsPage({ user, darkMode, onToggleDark, onLogout, habits, logs }) 
 
     const exportJSON = () => {
         download(
-            JSON.stringify({ user: { name: user.name, email: user.email }, habits, logs, exportedAt: new Date().toISOString() }, null, 2),
+            JSON.stringify({ user: { name: user.name, email: user.email }, habbits, logs, exportedAt: new Date().toISOString() }, null, 2),
             "habitflow-export.json", "application/json"
         );
         setMsg("JSON exported!"); setTimeout(() => setMsg(""), 2500);
@@ -23,7 +30,7 @@ function SettingsPage({ user, darkMode, onToggleDark, onLogout, habits, logs }) 
 
     const exportCSV = () => {
         const rows = [["Habit", "Category", "Date", "Completed"]];
-        logs.forEach((l) => { const h = habits.find((x) => x.id === l.habitId); if (h) rows.push([h.name, h.category, l.date, l.completed]); });
+        logs.forEach((l) => { const h = habbits.find((x) => x.id === l.habitId); if (h) rows.push([h.name, h.category, l.date, l.completed]); });
         download(rows.map((r) => r.join(",")).join("\n"), "habitflow-export.csv", "text/csv");
         setMsg("CSV exported!"); setTimeout(() => setMsg(""), 2500);
     };
@@ -35,6 +42,10 @@ function SettingsPage({ user, darkMode, onToggleDark, onLogout, habits, logs }) 
         </div>
     );
 
+    useEffect(() => {
+        console.log(user);
+
+    }, [])
     return (
         <div>
             <h1 className="text-[#1c2128] dark:text-[#e6edf3] text-2xl font-extrabold m-0 mb-6">Settings</h1>
@@ -43,8 +54,8 @@ function SettingsPage({ user, darkMode, onToggleDark, onLogout, habits, logs }) 
             <Card className="mb-3.5">
                 <h3 className="text-[#1c2128] dark:text-[#e6edf3] font-extrabold text-[15px] m-0 mb-4">Profile</h3>
                 <div className="flex items-center gap-3.5">
-                    <div className="w-14 h-14 rounded-full gradient-logo flex items-center justify-center flex-shrink-0 text-[22px] font-extrabold text-white">
-                        {user.name[0].toUpperCase()}
+                    <div className="w-14 h-14 rounded-full gradient-logo flex items-center justify-center shrink-0 text-[22px] font-extrabold text-white">
+                        {getInitials(user.name)}
                     </div>
                     <div>
                         <div className="text-[#1c2128] dark:text-[#e6edf3] font-extrabold text-[17px]">{user.name}</div>
@@ -66,12 +77,12 @@ function SettingsPage({ user, darkMode, onToggleDark, onLogout, habits, logs }) 
                     </div>
                     {/* Toggle switch */}
                     <div
-                        onClick={onToggleDark}
-                        className="w-[50px] h-[27px] rounded-full border border-[#d0d7de] dark:border-[#30363d] cursor-pointer relative transition-colors duration-[250ms]"
+                        onClick={() => setDarkMode(!darkMode)}
+                        className="w-12.5 h-6.75 rounded-full border border-[#d0d7de] dark:border-[#30363d] cursor-pointer relative transition-colors duration-250"
                         style={{ background: darkMode ? "#7c3aed" : "#f6f8fa" }}
                     >
                         <div
-                            className="absolute top-[3px] w-[19px] h-[19px] rounded-full bg-white transition-[left] duration-[250ms]"
+                            className="absolute top-0.75 w-4.75 h-4.75 rounded-full bg-white transition-[left] duration-250"
                             style={{ left: darkMode ? "25px" : "3px", boxShadow: "0 1px 4px rgba(0,0,0,.35)" }}
                         />
                     </div>
@@ -103,7 +114,7 @@ function SettingsPage({ user, darkMode, onToggleDark, onLogout, habits, logs }) 
             {/* Stats */}
             <Card className="mb-5">
                 <h3 className="text-[#1c2128] dark:text-[#e6edf3] font-extrabold text-[15px] m-0 mb-1">Account Stats</h3>
-                <StatRow label="Habits created" value={habits.length} />
+                <StatRow label="Habits created" value={habbits.length} />
                 <StatRow label="Log entries" value={logs.length} />
                 <StatRow label="Completed sessions" value={logs.filter((l) => l.completed).length} />
                 <StatRow label="Member since" value={new Date(user.createdAt ?? Date.now()).toLocaleDateString()} />
@@ -111,8 +122,8 @@ function SettingsPage({ user, darkMode, onToggleDark, onLogout, habits, logs }) 
 
             {/* Logout */}
             <button
-                onClick={onLogout}
-                className="w-full py-[15px] bg-red-500/[.08] border border-red-500/30 rounded-2xl text-red-500 cursor-pointer font-extrabold text-[15px] font-sans flex items-center justify-center gap-2 hover:bg-red-500/15 transition-colors"
+                onClick={() => logoutContext()}
+                className="w-full py-3.75 bg-red-500/8 border border-red-500/30 rounded-2xl text-red-500 cursor-pointer font-extrabold text-[15px] font-sans flex items-center justify-center gap-2 hover:bg-red-500/15 transition-colors"
             >
                 <LogOut size={18} /> Sign Out
             </button>

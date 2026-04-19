@@ -12,7 +12,7 @@ const fmtDate = (d = new Date()) => {
 const todayStr = () => fmtDate(new Date());
 
 /** Tiny unique id */
-const uid = () => Math.random().toString(36).slice(2) + Da+te.now().toString(36);
+const uid = () => Math.random().toString(36).slice(2) + Da + te.now().toString(36);
 
 /** Simple password hashing (use bcrypt on real backend) */
 const hashPw = (pw) => btoa(encodeURIComponent(pw + "__hf_salt__"));
@@ -165,6 +165,15 @@ const getTheme = (dark) => ({
   shadow: dark ? "0 8px 32px rgba(0,0,0,0.5)" : "0 4px 20px rgba(0,0,0,0.08)",
 });
 
+const getInitials = (name) => {
+  return name
+    .trim()
+    .split(/\s+/)
+    .map(word => word[0])
+    .join('')
+    .toUpperCase();
+}
+
 export {
   uid,
   todayStr,
@@ -176,4 +185,5 @@ export {
   calcStreak,
   getTheme,
   hashPw,
+  getInitials
 };

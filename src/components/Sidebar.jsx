@@ -7,6 +7,8 @@ import {
 import { AuthContext } from '../context/AuthContext';
 import { useNavigate } from 'react-router';
 import useAuth from '../hooks/userAuth';
+import { AppContext } from '../context/AppContext';
+import { getInitials } from '../utils/commonUtils';
 
 function Sidebar() {
     const NAV = [
@@ -18,23 +20,16 @@ function Sidebar() {
         { id: "test", Icon: HelpCircle, label: "Test" },
     ];
 
-    const { view, setView } = useContext(AuthContext)
+    const { view, setView } = useContext(AppContext)
     const [darkMode, setDarkMode] = useState(true)
     const [open, setOpen] = useState(false)
+    const navigate = useNavigate();
     const [user, setUser] = useState({
         id: '',
         name: '',
         email: ''
     })
 
-    const getInitials = (name) => {
-        return name
-            .trim()
-            .split(/\s+/)
-            .map(word => word[0])
-            .join('')
-            .toUpperCase();
-    }
     const { getUserDetails, logoutContext } = useContext(AuthContext)
 
     const { isLoginSessionValid } = useAuth()
@@ -45,20 +40,9 @@ function Sidebar() {
         isLoginSessionValid();
     }, [])
 
-    useEffect(() => {
-        console.log('This is user : ' + JSON.stringify(user));
-
-    }, [user])
-
     const onToggleDark = () => {
 
     }
-
-    const navigate = useNavigate();
-    useEffect(() => {
-        console.log('View : ' + view);
-
-    }, [view])
 
     useEffect(() => {
         const handleClickOutside = (e) => {
@@ -66,7 +50,6 @@ function Sidebar() {
                 setOpen(false);
             }
         };
-
         document.addEventListener('click', handleClickOutside);
         return () => document.removeEventListener('click', handleClickOutside);
     }, []);

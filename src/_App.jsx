@@ -68,28 +68,7 @@ export default function _App() {
   };
   const toggleDark = () => setDarkMode((d) => { store.set("darkMode", !d); return !d; });
 
-  /* ─── Habit CRUD ─────────────────────────────────── */
-  const saveHabit = useCallback((formData) => {
-    const all = store.get("habits") ?? [];
-    let updated;
-    if (modal === "new") {
-      updated = [...all, { id: uid(), userId: user.id, ...formData, createdAt: new Date().toISOString() }];
-    } else {
-      updated = all.map((h) => h.id === modal.id ? { ...modal, ...formData } : h);
-    }
-    store.set("habits", updated);
-    setHabits(updated.filter((h) => h.userId === user.id));
-    setModal(null);
-  }, [modal, user]);
 
-  const deleteHabit = useCallback((habitId) => {
-    if (!window.confirm("Delete this habit and all its history?")) return;
-    const allH = (store.get("habits") ?? []).filter((h) => h.id !== habitId);
-    const allL = (store.get("habitLogs") ?? []).filter((l) => l.habitId !== habitId);
-    store.set("habits", allH); store.set("habitLogs", allL);
-    setHabits(allH.filter((h) => h.userId === user.id));
-    setLogs(allL.filter((l) => l.userId === user.id));
-  }, [user]);
 
 
 

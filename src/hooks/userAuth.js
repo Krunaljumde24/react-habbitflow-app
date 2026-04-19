@@ -21,7 +21,6 @@ const useAuth = () => {
             });
             return result.data;
         } catch (error) {
-            // console.log("Error : ", error.response?.data);
             return {
                 status: error.response?.data?.status || "Failure",
                 message:
@@ -37,7 +36,6 @@ const useAuth = () => {
             }
         }).then(resp => {
             console.log(resp.data.message);
-
             switch (resp.status) {
                 case 201:
                     toast.success(resp.data.message)

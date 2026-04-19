@@ -5,14 +5,18 @@ import { LogIn } from "lucide-react";
 import { useForm } from "react-hook-form";
 import useAuth from "../hooks/userAuth";
 import { AuthContext } from "../context/AuthContext";
+import { AppContext } from '../context/AppContext'
 import { useNavigate } from "react-router";
+import { getHabbitsByUserId } from "../service/AppService";
 
 export default function Login({ error, setError, loading, setLoading }) {
 
     // const [isLogin, setIsLogin] = useState(true);
     const { register, handleSubmit, watch, formState: { errors }, setValue } = useForm()
     const inputCls = "w-full px-3.5 py-3 bg-[#0d1117] border border-[#30363d] rounded-[10px] text-[#e6edf3] text-sm font-sans outline-none box-border focus:border-violet-600 transition-colors";
+
     const { loginContext } = useContext(AuthContext);
+    const { habbits, setHabbits, view, setView } = useContext(AppContext)
 
     const { login, validateLoginSession } = useAuth();
     const navigate = useNavigate()
@@ -25,10 +29,12 @@ export default function Login({ error, setError, loading, setLoading }) {
             setLoading(true);
             const status = await login(data);
             if (status.status === 'Success') {
-                console.log('login ho gy h ');
-
+                let userId = status.data.user.id;
                 toast.success(status.message)
                 loginContext(status.data);
+                // const habitsData = await getHabbitsByUserId(userId)
+                // setHabbits(habitsData)
+                setView('dashboard')
                 setLoading(false);
                 navigate('/')
                 return;

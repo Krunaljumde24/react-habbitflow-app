@@ -8,7 +8,7 @@ export const AuthProvider = ({ children }) => {
 
     const [loggedInUser, setLoggedInUser] = useState(null)
 
-    const [view, setView] = useState('')
+
 
     // Load from localStorage on refresh
     useEffect(() => {
@@ -33,7 +33,7 @@ export const AuthProvider = ({ children }) => {
     const isAuthenticated = !!loggedInUser;
 
     return (
-        <AuthContext.Provider value={{ loggedInUser, loginContext, logoutContext, getUserDetails, isAuthenticated, view, setView }}>
+        <AuthContext.Provider value={{ loggedInUser, loginContext, logoutContext, getUserDetails, isAuthenticated }}>
             {children}
         </AuthContext.Provider>
     )

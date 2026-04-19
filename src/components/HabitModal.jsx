@@ -1,23 +1,42 @@
-import React, { useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { todayStr } from '../utils/commonUtils'
 import Field from './ui/Field';
 import Input from './ui/Input';
 import { X } from 'lucide-react';
 import { CATEGORIES } from '../constants/categories';
 import { WEEKDAY_LABELS } from '../constants/weekLabes';
+import { AppContext } from '../context/AppContext';
+import { AuthContext } from '../context/AuthContext';
+import { saveHabbitForUserId } from '../service/AppService';
 
-function HabitModal({ habit, onSave, onClose }) {
+function HabitModal({ habitUpdated, habit, onSave, onClose }) {
+
+    const { getUserDetails } = useContext(AuthContext)
     const [form, setForm] = useState({
-        name: habit?.name ?? "",
-        description: habit?.description ?? "",
+        name: "",
+        description: "",
         category: habit?.category ?? "health",
-        frequency: habit?.frequency ?? "daily",
-        customDays: habit?.customDays ?? [],
-        startDate: habit?.startDate ?? todayStr(),
-        reminder: habit?.reminder ?? "",
+        frequency: "daily",
+        customDays: [],
+        startDate: todayStr(),
+        reminder: "",
     });
-    const [err, setErr] = useState("");
 
+    useEffect(() => {
+        if (habit != null) {
+            setForm({
+                name: habit?.name ?? "",
+                description: habit?.description ?? "",
+                category: habit?.category ?? "health",
+                frequency: habit?.frequency ?? "daily",
+                customDays: habit?.customDays ?? [],
+                startDate: habit?.startDate ?? todayStr(),
+                reminder: habit?.reminder ?? "",
+            })
+        }
+    }, [])
+
+    const [err, setErr] = useState("");
     const set = (field, val) => setForm((f) => ({ ...f, [field]: val }));
     const toggleDay = (i) => setForm((f) => ({
         ...f,
@@ -27,9 +46,33 @@ function HabitModal({ habit, onSave, onClose }) {
     }));
 
     const save = () => {
-        if (!form.name.trim()) { setErr("Habit name is required."); return; }
-        onSave(form);
+        if (!form.name.trim() || !form.description.trim()) {
+            setErr("Habit name and description is required.");
+            return;
+        }
+        saveHabit(form);
     };
+
+    const saveHabit = (formData) => {
+        let obj = {
+            userId: getUserDetails()?.user?.id,
+            data: formData
+        }
+        saveHabbitForUserId(obj)
+        onSave(!habitUpdated)
+
+        // const all = store.get("habits") ?? [];
+        // let updated;
+        // if (modal === "new") {
+        //     updated = [...all, { id: uid(), userId: user.id, ...formData, createdAt: new Date().toISOString() }];
+        // } else {
+        //     updated = all.map((h) => h.id === modal.id ? { ...modal, ...formData } : h);
+        // }
+        // store.set("habits", updated);
+        // setHabits(updated.filter((h) => h.userId === user.id));
+        // setModal(null);
+    }
+
 
     return (
         /* Overlay */
@@ -43,7 +86,7 @@ function HabitModal({ habit, onSave, onClose }) {
                 {/* Header */}
                 <div className="flex justify-between items-center mb-6">
                     <h2 className="text-[#1c2128] dark:text-[#e6edf3] m-0 text-xl font-extrabold">
-                        {habit ? "Edit Habit" : "New Habit ✨"}
+                        {habit === 'new' ? "New Habit ✨" : "Edit Habit"}
                     </h2>
                     <button
                         onClick={onClose}
@@ -112,8 +155,8 @@ function HabitModal({ habit, onSave, onClose }) {
                                 key={f}
                                 onClick={() => set("frequency", f)}
                                 className={`px-4 py-2.25 rounded-lg text-[13px] font-bold font-sans cursor-pointer transition-all duration-150 capitalize border ${form.frequency === f
-                                        ? "gradient-brand text-white border-violet-600"
-                                        : "bg-[#f6f8fa] dark:bg-[#0d1117] border-[#d0d7de] dark:border-[#30363d] text-[#656d76] dark:text-[#8b949e]"
+                                    ? "gradient-brand text-white border-violet-600"
+                                    : "bg-[#f6f8fa] dark:bg-[#0d1117] border-[#d0d7de] dark:border-[#30363d] text-[#656d76] dark:text-[#8b949e]"
                                     }`}
                             >
                                 {f}
@@ -128,8 +171,8 @@ function HabitModal({ habit, onSave, onClose }) {
                                     key={d}
                                     onClick={() => toggleDay(i)}
                                     className={`flex-1 py-2.25 rounded-[7px] text-[11px] font-extrabold font-sans cursor-pointer transition-all duration-150 border ${form.customDays.includes(i)
-                                            ? "gradient-brand text-white border-violet-600"
-                                            : "bg-[#f6f8fa] dark:bg-[#0d1117] border-[#d0d7de] dark:border-[#30363d] text-[#656d76] dark:text-[#8b949e]"
+                                        ? "gradient-brand text-white border-violet-600"
+                                        : "bg-[#f6f8fa] dark:bg-[#0d1117] border-[#d0d7de] dark:border-[#30363d] text-[#656d76] dark:text-[#8b949e]"
                                         }`}
                                 >
                                     {d}

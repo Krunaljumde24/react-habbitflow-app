@@ -1,14 +1,17 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { todayStr, isHabitDue } from "../utils/commonUtils"
 import Card from '../components/ui/Card';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { MONTH_NAMES } from "../constants/months"
 import { WEEKDAY_LABELS } from "../constants/weekLabes"
 import TaskRow from '../components/TaskRow';
+import { AppContext } from '../context/AppContext.jsx'
 
-function CalendarPage({ habits, logs, onToggle }) {
+function CalendarPage() {
     const [cur, setCur] = useState(new Date());
     const [selected, setSel] = useState(null);
+
+    const { habbits } = useContext(AppContext)
 
     const year = cur.getFullYear();
     const month = cur.getMonth();
@@ -26,7 +29,7 @@ function CalendarPage({ habits, logs, onToggle }) {
         if (!day) return null;
         const ds = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
         if (ds > today) return "future";
-        const due = habits.filter((h) => isHabitDue(h, ds));
+        const due = habbits.filter((h) => isHabitDue(h, ds));
         if (!due.length) return "none";
         const done = due.filter((h) => logs.some((l) => l.habitId === h.id && l.date === ds && l.completed));
         if (done.length === 0) return "missed";
@@ -131,7 +134,7 @@ function CalendarPage({ habits, logs, onToggle }) {
                 const isToday = selStr === today;
                 const isPast = selStr < today;
                 const isFuture = selStr > today;
-                const selHabitsForDay = habits.filter((h) => isHabitDue(h, selStr));
+                const selHabitsForDay = habbits.filter((h) => isHabitDue(h, selStr));
                 return (
                     <Card>
                         <div className="flex justify-between items-center mb-3.5">

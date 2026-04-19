@@ -1,20 +1,49 @@
-import React from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { CATEGORIES } from '../constants/categories';
 import { Check, Edit2, Trash2 } from 'lucide-react';
 import Tag from './ui/Tag';
+import { store } from '../utils/commonUtils';
 
-function HabitRow({ habit, done, streak, onToggle, onEdit, onDelete, description, totalDone }) {
+function HabitRow({ habit, streak, totalDone, setModal, modal, setDeleteModal }) {
     const cat = CATEGORIES.find((c) => c.id === habit.category) ?? CATEGORIES[7];
+
+    const [done, setDone] = useState(false)
+
+    /* ─── Log toggle ─────────────────────────────────── */
+    const toggleLog = (habitId) => {
+
+        setDone(!done)
+
+
+        //     "hId": "23",
+        //     "uId": "18",
+        //     "logDate": "2026-04-19T10:51:43.548Z",
+        //     "note": "habbit log created",
+        //     "status": true
+    }
+
+    const onDelete = () => {
+        setDeleteModal(true)
+    }
+
+    const onEdit = () => {
+        setModal('Edit')
+    }
+    useEffect(() => {
+        // console.log(habit);
+
+    }, [])
 
     return (
         <div
             className="bg-white dark:bg-[#161b22] rounded-2xl p-3.5 px-4 flex items-center gap-3.5 transition-all duration-200"
             style={{ border: `1px solid ${done ? cat.color + "44" : "var(--border)"}` }}
         >
+
             {/* Toggle button */}
             <button
-                onClick={onToggle}
-                className="w-[30px] h-[30px] rounded-full flex items-center justify-center cursor-pointer flex-shrink-0 transition-all duration-200"
+                onClick={() => toggleLog(habit.id)}
+                className="w-7.5 h-7.5 rounded-full flex items-center justify-center cursor-pointer shrink-0 transition-all duration-200"
                 style={{
                     border: `2px solid ${done ? cat.color : "#30363d"}`,
                     background: done ? cat.color : "transparent",
@@ -22,7 +51,6 @@ function HabitRow({ habit, done, streak, onToggle, onEdit, onDelete, description
             >
                 {done && <Check size={14} color="#fff" strokeWidth={3} />}
             </button>
-
             {/* Info */}
             <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-1.5 mb-1">
@@ -31,35 +59,33 @@ function HabitRow({ habit, done, streak, onToggle, onEdit, onDelete, description
                         {habit.name}
                     </span>
                 </div>
-                <div className="flex gap-[7px] flex-wrap items-center">
+                <div className="flex gap-1.75 flex-wrap items-center">
                     <Tag color={cat.color}>{cat.label}</Tag>
                     <Tag color="#8b949e">{habit.frequency}</Tag>
                     {streak.current > 0 && (
                         <span className="text-[11px] text-orange-400 font-bold">🔥 {streak.current}d</span>
                     )}
                 </div>
-                <div className="ml-[5px] mt-[5px] text-[#656d76] dark:text-[#8b949e] text-xs pb-0.5">
-                    {description}&nbsp;·&nbsp;{totalDone} completions total
+                <div className="ml-1.25 mt-1.25 text-[#656d76] dark:text-[#8b949e] text-xs pb-0.5">
+                    {habit.description}&nbsp;·&nbsp;{totalDone} completions total
                 </div>
             </div>
 
             {/* Actions */}
-            {onEdit && (
-                <div className="flex gap-1.5">
-                    <button
-                        onClick={onEdit}
-                        className="p-[7px] bg-[#f6f8fa] dark:bg-[#21262d] border border-[#d0d7de] dark:border-[#30363d] rounded-lg cursor-pointer text-[#656d76] dark:text-[#8b949e] flex hover:bg-[#e8eaed] dark:hover:bg-[#30363d] transition-colors"
-                    >
-                        <Edit2 size={14} />
-                    </button>
-                    <button
-                        onClick={onDelete}
-                        className="p-[7px] bg-red-500/10 border border-red-500/20 rounded-lg cursor-pointer text-red-500 flex hover:bg-red-500/20 transition-colors"
-                    >
-                        <Trash2 size={14} />
-                    </button>
-                </div>
-            )}
+            <div className="flex gap-1.5">
+                <button
+                    onClick={() => onEdit()}
+                    className="p-1.75 bg-[#f6f8fa] dark:bg-[#21262d] border border-[#d0d7de] dark:border-[#30363d] rounded-lg cursor-pointer text-[#656d76] dark:text-[#8b949e] flex hover:bg-[#e8eaed] dark:hover:bg-[#30363d] transition-colors"
+                >
+                    <Edit2 size={14} />
+                </button>
+                <button
+                    onClick={() => onDelete()}
+                    className="p-1.75 bg-red-500/10 border border-red-500/20 rounded-lg cursor-pointer text-red-500 flex hover:bg-red-500/20 transition-colors"
+                >
+                    <Trash2 size={14} />
+                </button>
+            </div>
         </div>
     );
 }
