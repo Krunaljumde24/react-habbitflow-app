@@ -9,74 +9,97 @@ import { AppContext } from '../context/AppContext';
 
 function Dashboard() {
 
-    // const [habits, setHabits] = useState([]);
-    // const [logs, setLogs] = useState([]);
+    const today = todayStr();
+    const now = new Date();
+    const hr = now.getHours();
+
+    const [data, setData] = useState({
+        greet: hr < 12 ? "Good morning" : hr < 17 ? "Good afternoon" : "Good evening",
+        dateLabel: now.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" }),
+        dueToday: [],
+        doneToday: [],
+        pending: [],
+        rate: 0,
+        streak: 0
+    })
 
     const [loading, setLoading] = useState(true)
     const { loggedInUser } = useContext(AuthContext)
     const { setHabbits, logs, setLogs, habbits } = useContext(AppContext)
     const [user, setUser] = useState(loggedInUser.user)
+    const [userLogs, setUserLogs] = useState([])
 
-    const today = todayStr();
-    const dueToday = habbits.filter((h) => isHabitDue(h, today));
-    const doneToday = dueToday.filter((h) => logs.some((l) => l.habitId === h.id && l.date === today && l.completed));
+    useEffect(() => {
+        setLoading(true)
+        const greet = hr < 12 ? "Good morning" : hr < 17 ? "Good afternoon" : "Good evening";
+        const dateLabel = now.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
+        const dueToday = habbits.filter((h) => isHabitDue(h, today));
+        const doneToday = dueToday.filter((h) => userLogs.some((l) => l.habitId === h.id && l.date === today && l.completed));
+        const pending = dueToday.filter((h) => !userLogs.some((l) => l.habitId === h.id && l.date === today && l.completed));
+        const rate = dueToday.length ? Math.round((doneToday.length / dueToday.length) * 100) : 0;
+        const streak = calcGlobalStreak(habbits, userLogs);
 
-    const pending = dueToday.filter((h) => !logs.some((l) => l.habitId === h.id && l.date === today && l.completed));
-
-    const rate = dueToday.length ? Math.round((doneToday.length / dueToday.length) * 100) : 0;
-
-    const { current: streak } = calcGlobalStreak(habbits, logs);
-    const now = new Date();
-    const hr = now.getHours();
-    const greet = hr < 12 ? "Good morning" : hr < 17 ? "Good afternoon" : "Good evening";
-    const dateLabel = now.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
-
+        setData({
+            ...data,
+            greet: greet,
+            dateLabel: dateLabel,
+            dueToday: dueToday,
+            doneToday: doneToday,
+            pending: pending,
+            rate: rate,
+            streak: streak
+        })
+        setLoading(false)
+    }, [logs])
 
     const loadData = async () => {
         let id = loggedInUser.user.id;
         const data = await getHabbitsByUserId(id)
-        // setHabits(data)
         setHabbits(data)
-        const logdata = await getHabbitLogsByUserId(id);
-        // setLogs(loadData)
-        // console.log(logdata);
-
     }
 
     const loadLogs = async () => {
         setUser(loggedInUser.user)
         let id = loggedInUser.user.id;
         const logdata = await getHabbitLogsByUserId(id);
+        await setUserLogs(logdata)
         setLogs(loadData)
-        console.log(logdata);
     }
     useEffect(() => {
-
         loadData();
-        setLoading(false)
-        // loadLogs();
+        loadLogs();
+        setTimeout(() => {
+            setLoading(false)
+        }, 100);
     }, [])
 
     const onAddHabit = () => {
 
     }
 
+    useEffect(() => {
+        // console.log(userLogs);
+
+        // console.log(habbits);
+
+    }, [logs, habbits])
+
     if (loading) return <h1>Loading...</h1>
 
     return (
         <div>
             {/* Greeting */}
-            <p className="text-[#656d76] dark:text-[#505e6d] text-sm mb-1">{dateLabel}</p>
+            <p className="text-[#656d76] dark:text-[#505e6d] text-sm mb-1">{data.dateLabel}</p>
             <h1 className="text-[#1c2128] dark:text-[#e6edf3] text-[28px] font-extrabold mb-6 tracking-tight">
-                {greet}, {user.name.split(" ")[0]} 👋
+                {data.greet}, {user.name.split(" ")[0]} 👋
             </h1>
 
             {/* Stats row */}
             <div className="grid grid-cols-3 gap-3 mb-4.5">
                 {[
-                    { icon: "✅", val: `${doneToday.length}/${dueToday.length}`, label: "Today" },
-                    { icon: "📊", val: `${rate}%`, label: "Completion" },
-                    { icon: "🔥", val: `${streak}d`, label: "Streak" },
+                    { icon: "✅", val: `${data.doneToday.length}/${data.dueToday.length}`, label: "Today" },
+                    { icon: "📊", val: `${data.rate}%`, label: "Completion" },
+                    { icon: "🔥", val: `${data.streak.current}d`, label: "Streak" },
                 ].map((s) => (
                     <Card key={s.label} className="p-4! text-center">
                         <div className="text-[22px] mb-1">{s.icon}</div>
@@ -87,21 +110,21 @@ function Dashboard() {
             </div>
 
             {/* Progress bar */}
-            {dueToday.length > 0 && (
+            {data.dueToday.length > 0 && (
                 <Card className="px-4.5! py-3.5! mb-5">
                     <div className="flex justify-between mb-2">
                         <span className="text-[#656d76] dark:text-[#8b949e] text-[13px] font-semibold">Daily Progress</span>
-                        <span className={`text-[13px] font-extrabold ${rate === 100 ? "text-green-500" : "text-[#1c2128] dark:text-[#e6edf3]"}`}>
-                            {doneToday.length} of {dueToday.length} done
+                        <span className={`text-[13px] font-extrabold ${data.rate === 100 ? "text-green-500" : "text-[#1c2128] dark:text-[#e6edf3]"}`}>
+                            {data.doneToday.length} of {data.dueToday.length} done
                         </span>
                     </div>
                     <div className="bg-[#f6f8fa] dark:bg-[#21262d] rounded-full h-2 overflow-hidden">
                         <div
-                            className={`h-full rounded-full transition-[width] duration-600 ease-in-out ${rate === 100 ? "gradient-success" : "gradient-progress"}`}
-                            style={{ width: `${rate}%` }}
+                            className={`h-full rounded-full transition-[width] duration-600 ease-in-out ${data.rate === 100 ? "gradient-success" : "gradient-progress"}`}
+                            style={{ width: `${data.rate}%` }}
                         />
                     </div>
-                    {rate === 100 && dueToday.length > 0 && (
+                    {data.rate === 100 && data.dueToday.length > 0 && (
                         <p className="text-green-500 text-xs font-bold mt-2 text-center">
                             🎉 Perfect day! All habits complete — streak continues!
                         </p>
@@ -122,7 +145,7 @@ function Dashboard() {
                 </button>
             </div>
 
-            {dueToday.length === 0 ? (
+            {data.dueToday.length === 0 ? (
                 <div className="bg-white dark:bg-[#161b22] border-2 border-dashed border-[#d0d7de] dark:border-[#30363d] rounded-2xl py-12 px-6 text-center">
                     <div className="text-5xl mb-3">🌱</div>
                     <p className="text-[#656d76] dark:text-[#8b949e] m-0 text-[15px]">No habits today — create your first one!</p>
@@ -130,32 +153,30 @@ function Dashboard() {
             ) : (
                 <Card className="p-1.5!">
                     {/* Pending section */}
-                    {pending.length > 0 && (
+                    {data.pending.length > 0 && (
                         <>
                             <div className="px-3.5 pt-2 pb-1 flex items-center gap-2">
                                 <div className="w-1.5 h-1.5 rounded-full bg-[#656d76] dark:bg-[#8b949e]" />
                                 <span className="text-[#656d76] dark:text-[#8b949e] text-[11px] font-bold uppercase tracking-[0.07em]">
-                                    Pending — {pending.length}
+                                    Pending — {data.pending.length}
                                 </span>
                             </div>
-                            {pending.map((h) => (
+                            {data.pending.map((h) => (
                                 <TaskRow
                                     key={h.id}
                                     habit={h}
-                                // done={false}
-                                // onToggle={() => toggleLog(h.id, today)}
                                 />
                             ))}
                         </>
                     )}
 
                     {/* Divider */}
-                    {pending.length > 0 && doneToday.length > 0 && (
+                    {data.pending.length > 0 && data.doneToday.length > 0 && (
                         <div className="h-px bg-[#d0d7de] dark:bg-[#30363d] mx-3.5 mt-1" />
                     )}
 
                     {/* Completed section */}
-                    {doneToday.length > 0 && (
+                    {data.doneToday.length > 0 && (
                         <>
                             <div className="px-3.5 pt-2 pb-1 flex items-center gap-2">
                                 <div className="w-1.5 h-1.5 rounded-full bg-green-500" />

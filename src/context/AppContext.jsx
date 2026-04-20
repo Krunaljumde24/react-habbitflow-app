@@ -1,34 +1,27 @@
-import React, { createContext, useState } from 'react'
+import React, { createContext, useContext, useEffect, useState } from 'react'
+import { AuthContext } from './AuthContext';
 
 const AppContext = createContext();
 
 
 const AppProvider = ({ children }) => {
+    const { } = useContext(AuthContext)
     const [view, setView] = useState('')
     const [habbits, setHabbits] = useState([])
-    const [logs, setLogs] = useState([
-        // {
-        //     "id": "kwnkpw3noi9mn0kwhfm",
-        //     "habitId": "yt5qktzy8imn0kqsha",
-        //     "date": "2026-03-21",
-        //     "completed": false,
-        //     "userId": "demo-001"
-        // },
-        // {
-        //     "id": "tqimnowy41mn0mb6t1",
-        //     "habitId": "c5vbxxh8bfmn0kx9qz",
-        //     "date": "2026-03-21",
-        //     "completed": false,
-        //     "userId": "demo-001"
-        // },
-        // {
-        //     "id": "pwb9rjwftmn0mb7d0",
-        //     "habitId": "teu2caqleimn0mazjr",
-        //     "date": "2026-03-21",
-        //     "completed": true,
-        //     "userId": "demo-001"
-        // }
-        ])
+    const [logs, setLogs] = useState([])
+
+    useEffect(() => {
+
+        if (Array.isArray(habbits) && habbits.length > 0) {
+            console.log(habbits);
+
+            var habitIds = [];
+            habbits.map((h) => habitIds.push(h.id));
+            console.log(habitIds);
+
+        }
+
+    }, [habbits])
 
     return (
         <AppContext.Provider value={{ habbits, setHabbits, view, setView, logs, setLogs }}>

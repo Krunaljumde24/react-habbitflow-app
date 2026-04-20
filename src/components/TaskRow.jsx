@@ -12,6 +12,8 @@ function TaskRow({ habit, readOnly = false }) {
     const toggleTasklog = (h) => {
         if (!readOnly) {
             setDone(!done)
+            console.log(h);
+            
         }
     }
 

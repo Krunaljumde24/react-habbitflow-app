@@ -46,6 +46,18 @@ const getHabbitLogsByUserId = async (id) => {
     });
     return result.data;
 }
+
+
+const toggleTasklog = (habit) => {
+
+    axios.post(`${baseUrl}/api/habbits/log`, {
+        hId: "22",
+        uId: "18",
+        logDate: "2026-04-19",
+        status: !habit
+    })
+}
+
 export {
     getHabbitsByUserId,
     saveHabbitForUserId,
