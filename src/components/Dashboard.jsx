@@ -4,25 +4,28 @@ import Card from './ui/Card';
 import { Plus } from 'lucide-react';
 import TaskRow from "../components/TaskRow"
 import { AuthContext } from '../context/AuthContext';
-import { getHabbitsByUserId } from '../service/AppService'
+import { getHabbitsByUserId, getHabbitLogsByUserId } from '../service/AppService'
 import { AppContext } from '../context/AppContext';
 
 function Dashboard() {
 
-    const [user, setUser] = useState({ name: 'test' })
-    const [habits, setHabits] = useState([]);
-    const [logs, setLogs] = useState([]);
+    // const [habits, setHabits] = useState([]);
+    // const [logs, setLogs] = useState([]);
 
     const [loading, setLoading] = useState(true)
     const { loggedInUser } = useContext(AuthContext)
-    const { setHabbits } = useContext(AppContext)
+    const { setHabbits, logs, setLogs, habbits } = useContext(AppContext)
+    const [user, setUser] = useState(loggedInUser.user)
 
     const today = todayStr();
-    const dueToday = habits.filter((h) => isHabitDue(h, today));
+    const dueToday = habbits.filter((h) => isHabitDue(h, today));
     const doneToday = dueToday.filter((h) => logs.some((l) => l.habitId === h.id && l.date === today && l.completed));
+
     const pending = dueToday.filter((h) => !logs.some((l) => l.habitId === h.id && l.date === today && l.completed));
+
     const rate = dueToday.length ? Math.round((doneToday.length / dueToday.length) * 100) : 0;
-    const { current: streak } = calcGlobalStreak(habits, logs);
+
+    const { current: streak } = calcGlobalStreak(habbits, logs);
     const now = new Date();
     const hr = now.getHours();
     const greet = hr < 12 ? "Good morning" : hr < 17 ? "Good afternoon" : "Good evening";
@@ -30,17 +33,28 @@ function Dashboard() {
 
 
     const loadData = async () => {
-        let userId = loggedInUser.user.id;
-        const data = await getHabbitsByUserId(userId)
-        setHabits(data)
+        let id = loggedInUser.user.id;
+        const data = await getHabbitsByUserId(id)
+        // setHabits(data)
         setHabbits(data)
+        const logdata = await getHabbitLogsByUserId(id);
+        // setLogs(loadData)
+        // console.log(logdata);
+
     }
 
+    const loadLogs = async () => {
+        setUser(loggedInUser.user)
+        let id = loggedInUser.user.id;
+        const logdata = await getHabbitLogsByUserId(id);
+        setLogs(loadData)
+        console.log(logdata);
+    }
     useEffect(() => {
-        // Restore session
+
         loadData();
         setLoading(false)
-
+        // loadLogs();
     }, [])
 
     const onAddHabit = () => {
@@ -128,8 +142,8 @@ function Dashboard() {
                                 <TaskRow
                                     key={h.id}
                                     habit={h}
-                                    // done={false}
-                                    // onToggle={() => toggleLog(h.id, today)}
+                                // done={false}
+                                // onToggle={() => toggleLog(h.id, today)}
                                 />
                             ))}
                         </>

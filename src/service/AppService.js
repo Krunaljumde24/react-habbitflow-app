@@ -37,4 +37,17 @@ const saveHabbitForUserId = async (data) => {
     }
 }
 
-export { getHabbitsByUserId, saveHabbitForUserId }
+
+const getHabbitLogsByUserId = async (id) => {
+    const result = await axios.get(`${baseUrl}/api/habbits/log/${id}`, {
+        headers: {
+            'Cache-Control': 'no-cache',
+        }
+    });
+    return result.data;
+}
+export {
+    getHabbitsByUserId,
+    saveHabbitForUserId,
+    getHabbitLogsByUserId
+}

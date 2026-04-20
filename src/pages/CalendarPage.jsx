@@ -11,7 +11,7 @@ function CalendarPage() {
     const [cur, setCur] = useState(new Date());
     const [selected, setSel] = useState(null);
 
-    const { habbits } = useContext(AppContext)
+    const { habbits, logs } = useContext(AppContext)
 
     const year = cur.getFullYear();
     const month = cur.getMonth();
