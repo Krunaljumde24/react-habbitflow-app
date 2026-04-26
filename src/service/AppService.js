@@ -18,7 +18,6 @@ const getHabbitsByUserId = async (userId) => {
     }
 }
 
-
 const saveHabbitForUserId = async (data) => {
     try {
         const result = await axios.post(`${baseUrl}/api/habbits`, data, {

@@ -7,11 +7,13 @@ import { AuthProvider } from './context/AuthContext.jsx'
 import { AppProvider } from "./context/AppContext.jsx"
 import { createBrowserRouter, RouterProvider } from 'react-router'
 import Dashboard from './components/Dashboard.jsx'
+import NewDashboard from './components/NewDashboard.jsx'
 import Test from './components/Test.jsx'
 import HabitsPage from './pages/HabitsPage.jsx'
 import CalendarPage from './pages/CalendarPage.jsx'
 import AnalyticsPage from './pages/AnalyticsPage.jsx'
 import SettingsPage from './pages/SettingsPage.jsx'
+import AuthPage from './pages/AuthPage.jsx'
 
 const router = createBrowserRouter([
   {
@@ -25,6 +27,10 @@ const router = createBrowserRouter([
       {
         path: '/dashboard',
         element: <Dashboard />
+      },
+      {
+        path: '/new-dashboard',
+        element: <NewDashboard />
       },
       {
         path: '/habits',
@@ -46,8 +52,14 @@ const router = createBrowserRouter([
         path: '/test',
         element: <Test />
       },
+
     ]
-  },
+  }, {
+    path: '/auth',
+    element: <AuthPage />,
+  }
+
+
 ])
 
 createRoot(document.getElementById('root')).render(

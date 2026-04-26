@@ -10,51 +10,38 @@ import MobileNav from './components/MobileNav';
 import AuthPage from './pages/AuthPage';
 import useAuth from './hooks/userAuth';
 import Sidebar from "./components/Sidebar"
-import { Outlet } from 'react-router';
+import { Outlet, useNavigate } from 'react-router';
 import { Toaster } from 'react-hot-toast';
 import { AuthContext } from './context/AuthContext';
+import AppContainer from './components/AppContainer'
+import Loader from './components/ui/Loader'
 function App() {
 
-    const [modal, setModal] = useState(null); // null | "new" | habitObj
-    const [isMobile, setMobile] = useState(window.innerWidth < 768);
-
-    const [darkMode, setDarkMode] = useState(true)
     const [user, setUser] = useState(null)
-    const { getUserDetails , loggedInUser} = useContext(AuthContext)
+    const { loggedInUser, isAuthenticated, setIsAuthenticated, checkAuth } = useContext(AuthContext)
+    const [loading, setLoading] = useState(true)
+
+    const navigate = useNavigate();
 
     useEffect(() => {
+        if (!isAuthenticated) {
+            navigate('/auth')
+        } else {
+            setTimeout(() => {
+                setLoading(false)
+            }, 1500);
+        }
+    }, [])
 
-        // Resize window based on viewport
-        const onResize = () => setMobile(window.innerWidth < 768);
-        window.addEventListener("resize", onResize);
-
-        // load user from context or login
-        const u = getUserDetails()
-        setUser(u)
-
-        return () => window.removeEventListener("resize", onResize);
-    }, [loggedInUser])
-
-    if (!user) return <AuthPage />
-    else {
-        return (
-            <div className="min-h-screen bg-[#f0f2f5] dark:bg-[#0d1117] text-[#1c2128] dark:text-[#e6edf3] font-sans">
-                <Toaster />
-                {!isMobile && (
-                    <Sidebar />
-                )}
-                <main className={
-                    isMobile
-                        ? "px-4 pt-5 pb-24"
-                        : "ml-56 p-9 max-w-210"
-                }>
-                    <Outlet />
-                </main>
-                {isMobile && <MobileNav />}
-            </div>
-        )
-    }
-
+    return (
+        <div className="min-h-screen bg-[#f0f2f5] dark:bg-[#0d1117] text-[#1c2128] dark:text-[#e6edf3] font-sans">
+            <Toaster />
+            {loading && <Loader />}
+            {isAuthenticated && <AppContainer />}
+            {/* <AppContainer /> */}
+            {/* {!loading && !isAuthenticated && <AuthPage />} */}
+        </div>
+    )
 }
 
 export default App

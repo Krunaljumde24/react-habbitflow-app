@@ -11,12 +11,12 @@ import { getHabbitsByUserId } from "../service/AppService";
 
 export default function Login({ error, setError, loading, setLoading }) {
 
-    // const [isLogin, setIsLogin] = useState(true);
     const { register, handleSubmit, watch, formState: { errors }, setValue } = useForm()
     const inputCls = "w-full px-3.5 py-3 bg-[#0d1117] border border-[#30363d] rounded-[10px] text-[#e6edf3] text-sm font-sans outline-none box-border focus:border-violet-600 transition-colors";
 
-    const { loginContext } = useContext(AuthContext);
-    const { habbits, setHabbits, view, setView } = useContext(AppContext)
+    const { loginContext, isAuthenticated, setIsAuthenticated } = useContext(AuthContext);
+    const { habbits, setHabbits, view, setView, initializeData } = useContext(AppContext)
+
 
     const { login, validateLoginSession } = useAuth();
     const navigate = useNavigate()
@@ -28,15 +28,17 @@ export default function Login({ error, setError, loading, setLoading }) {
             setError("");
             setLoading(true);
             const status = await login(data);
+
             if (status.status === 'Success') {
                 let userId = status.data.user.id;
                 toast.success(status.message)
+                setIsAuthenticated(true)
                 loginContext(status.data);
-                // const habitsData = await getHabbitsByUserId(userId)
-                // setHabbits(habitsData)
-                setView('dashboard')
-                setLoading(false);
-                navigate('/')
+                await initializeData(userId)
+                setTimeout(() => {
+                    setLoading(false);
+                    navigate('/new-dashboard')
+                }, 2000);
                 return;
             } else {
                 toast.error(status.message);
@@ -90,16 +92,27 @@ export default function Login({ error, setError, loading, setLoading }) {
                     {error}
                 </div>
             )}
+            <div className="flex gap-2">
+                <button className="bg-amber-300 px-2 py-1 my-2 rounded-lg font-bold text-black"
+                    onClick={() => {
+                        setValue("email", "jamesbond@habbitflow.com");
+                        setValue("password", "password");
+                    }}
+                    type="button"
+                >
+                    Use James User
+                </button>
+                <button className="bg-red-300 px-2 py-1 my-2 rounded-lg font-bold text-black"
+                    onClick={() => {
+                        setValue("email", "krunaljumde24@gmail.com");
+                        setValue("password", "password");
+                    }}
+                    type="button"
+                >
+                    Use Krunal User
+                </button>
+            </div>
 
-            <button className="bg-amber-300 px-2 py-1 my-2 rounded-lg font-bold"
-                onClick={() => {
-                    setValue("email", "jamesbond@habbitflow.com");
-                    setValue("password", "password");
-                }}
-                type="button"
-            >
-                Use James User
-            </button>
         </form >
     )
 }

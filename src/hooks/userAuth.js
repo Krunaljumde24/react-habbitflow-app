@@ -9,8 +9,7 @@ const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 
 const useAuth = () => {
-
-    const { getUserDetails } = useContext(AuthContext)
+    const { setIsAuthenticated, setLoggedInUser } = useContext(AuthContext)
 
     const login = async (data) => {
         try {
@@ -19,6 +18,11 @@ const useAuth = () => {
                     "Content-Type": 'application/json'
                 }
             });
+            if (result.status === 200 && result.data.status === 'Success') {
+                // console.log(result.data.data);
+                setIsAuthenticated(true)
+                setLoggedInUser(result.data.data)
+            }
             return result.data;
         } catch (error) {
             return {
