@@ -22,14 +22,10 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <Dashboard />
+        element: <NewDashboard />
       },
       {
         path: '/dashboard',
-        element: <Dashboard />
-      },
-      {
-        path: '/new-dashboard',
         element: <NewDashboard />
       },
       {

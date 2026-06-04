@@ -4,6 +4,7 @@ import Login from "../components/Login.jsx"
 import SignUp from "../components/SignUp.jsx"
 import { AuthContext } from "../context/AuthContext.jsx";
 import { useNavigate } from "react-router";
+import { AppContext } from "../context/AppContext.jsx";
 
 
 function AuthPage() {
@@ -11,16 +12,18 @@ function AuthPage() {
     const [isLogin, setIsLogin] = useState(true);
     const [form, setForm] = useState({ name: "", email: "", password: "" });
     const [error, setError] = useState("");
-    const [loading, setLoading] = useState(false);
+    // const [loading, setLoading] = useState(false);
     const [loginTab, setLoginTab] = useState(true)
     const handle = (field) => (e) => setForm((f) => ({ ...f, [field]: e.target.value }));
 
 
     const { isAuthenticated, checkAuth } = useContext(AuthContext)
+
+    const { setLoading } = useContext(AppContext)
     const navigate = useNavigate();
     useEffect(() => {
         if (isAuthenticated) {
-            navigate('/new-dashboard')
+            navigate('/dashboard')
         }
     }, [isAuthenticated])
 

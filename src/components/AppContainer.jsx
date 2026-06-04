@@ -18,9 +18,7 @@ const AppContainer = () => {
     return (
         <>
             {!isMobile && (
-                <Sidebar
-                    enabled={isAuthenticated}
-                />
+                <Sidebar />
             )}
             <main className={
                 isMobile

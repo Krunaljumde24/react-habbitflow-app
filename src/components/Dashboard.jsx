@@ -25,9 +25,9 @@ function Dashboard() {
         streak: 0
     })
 
-    const [loading, setLoading] = useState(true)
+    // const [loading, setLoading] = useState(true)
     const { loggedInUser, isAuthenticated } = useContext(AuthContext)
-    const { setHabbits, logs, setLogs, habbits } = useContext(AppContext)
+    const { setHabbits, logs, setLogs, habbits, loading, setLoading } = useContext(AppContext)
     const [user, setUser] = useState({
         name: 'Krunal Jumde'
     })
@@ -97,8 +97,7 @@ function Dashboard() {
         setDashboardData()
     }, [])
 
-    if (loading) return <Loader />
-    else
+    if (isAuthenticated)
         return (
             <div>
                 {/* Greeting */}

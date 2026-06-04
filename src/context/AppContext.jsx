@@ -9,35 +9,23 @@ const AppProvider = ({ children }) => {
 
 
     const [loading, setLoading] = useState(false)
-
-    const [appData, setAppData] = useState({
-        user: null,
-        habits: [],
-        logs: []
-    })
+    const [appData, setAppData] = useState(null)
 
     const [view, setView] = useState('')
     const [habbits, setHabbits] = useState([])
     const [logs, setLogs] = useState([])
 
     useEffect(() => {
-        if (Array.isArray(habbits) && habbits.length > 0) {
-            var habitIds = [];
-            habbits.map((h) => habitIds.push(h.id));
-        }
+        // console.log(appData);
 
-    }, [habbits])
+        // if (appData != undefined) {
+        //     localStorage.setItem("userData", JSON.stringify(appData))
+        // }
+    }, [appData])
 
-
-    const initializeData = async (userId) => {
-        const hData = await getHabbitsByUserId(userId);
-        console.log(hData);
-        const hlData = await getHabbitLogsByUserId(userId)
-        console.log(hlData);
-    }
 
     return (
-        <AppContext.Provider value={{ habbits, setHabbits, view, setView, logs, setLogs, initializeData }}>
+        <AppContext.Provider value={{ habbits, setHabbits, view, setView, logs, setLogs, appData, setAppData, loading, setLoading }}>
             {children}
         </AppContext.Provider>
     )

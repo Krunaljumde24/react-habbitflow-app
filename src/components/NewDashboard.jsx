@@ -1,12 +1,15 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Card from './ui/Card'
 import { Plus } from 'lucide-react'
 import TaskRow from './TaskRow'
+import AppContainer from './AppContainer'
+import { AppContext } from '../context/AppContext'
+import { AuthContext } from '../context/AuthContext'
 
 function NewDashboard() {
 
-
-  const [loading, setLoading] = useState(true)
+  const { loggedInUser } = useContext(AuthContext);
+  const { appData, setLoading } = useContext(AppContext);
 
   const [stats, setStats] = useState([
     { id: 1, icon: "✅", val: ``, label: "Today" },
@@ -50,8 +53,18 @@ function NewDashboard() {
 
   useEffect(() => {
 
+    // console.log(appData);
 
-  })
+
+
+  }, [appData])
+
+  useEffect(() => {
+    setTimeout(() => {
+      setLoading(false)
+    }, 2000);
+  }, [])
+
   return (
     <div>
       {/* Greeting */}

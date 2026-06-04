@@ -9,15 +9,15 @@ import { useNavigate } from 'react-router';
 import useAuth from '../hooks/userAuth';
 import { AppContext } from '../context/AppContext';
 import { getInitials } from '../utils/commonUtils';
+import Loader from './ui/Loader';
 
-function Sidebar({ enabled }) {
+function Sidebar() {
     const NAV = [
         { id: "dashboard", Icon: Home, label: "Dashboard" },
         { id: "habits", Icon: List, label: "Habits" },
         { id: "calendar", Icon: Calendar, label: "Calendar" },
         { id: "analytics", Icon: BarChart2, label: "Analytics" },
         { id: "settings", Icon: Settings, label: "Settings" },
-        { id: "new-dashboard", Icon: Home, label: "New Dashboard" },
     ];
 
     const { view, setView } = useContext(AppContext)
@@ -30,17 +30,19 @@ function Sidebar({ enabled }) {
         email: ''
     })
 
-    const [loading, setLoading] = useState(true)
-    const { loggedInUser, logoutContext } = useContext(AuthContext)
+    // const [loading, setLoading] = useState(true)
+    const { logoutContext, isAuthenticated } = useContext(AuthContext)
+
+    const { appData, loading, setLoading } = useContext(AppContext)
 
 
     useEffect(() => {
-        let loadUserData = async () => {
-            setUser(loggedInUser.user)
+        if (appData) {
+            console.log(appData);
+            setLoading(false)
         }
-        loadUserData()
-
-    }, [])
+        // setUser(appData.user)
+    }, [appData])
 
     const onToggleDark = () => {
 
@@ -56,9 +58,9 @@ function Sidebar({ enabled }) {
         return () => document.removeEventListener('click', handleClickOutside);
     }, []);
 
-    if (enabled)
+    // if (isAuthenticated)
         return (
-            <div className="w-56 bg-white dark:bg-[#161b22] border-r border-[#d0d7de] dark:border-[#30363d] flex flex-col h-screen fixed left-0 top-0 z-100">
+            <div className="w-56 p-3 bg-white dark:bg-[#161b22] border-r border-[#d0d7de] dark:border-[#30363d] flex flex-col h-screen fixed left-0 top-0 z-100">
 
                 {/* Logo */}
                 <div className="px-4 py-5 border-b border-[#d0d7de] dark:border-[#30363d]">

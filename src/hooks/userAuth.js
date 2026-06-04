@@ -19,9 +19,9 @@ const useAuth = () => {
                 }
             });
             if (result.status === 200 && result.data.status === 'Success') {
-                // console.log(result.data.data);
+                let user = result.data.data.user
                 setIsAuthenticated(true)
-                setLoggedInUser(result.data.data)
+                setLoggedInUser(user)
             }
             return result.data;
         } catch (error) {

@@ -7,7 +7,7 @@ import useAuth from "../hooks/userAuth";
 import { AuthContext } from "../context/AuthContext";
 import { AppContext } from '../context/AppContext'
 import { useNavigate } from "react-router";
-import { getHabbitsByUserId } from "../service/AppService";
+import { getHabbitLogsByUserId, getHabbitsByUserId } from "../service/AppService";
 
 export default function Login({ error, setError, loading, setLoading }) {
 
@@ -15,7 +15,7 @@ export default function Login({ error, setError, loading, setLoading }) {
     const inputCls = "w-full px-3.5 py-3 bg-[#0d1117] border border-[#30363d] rounded-[10px] text-[#e6edf3] text-sm font-sans outline-none box-border focus:border-violet-600 transition-colors";
 
     const { loginContext, isAuthenticated, setIsAuthenticated } = useContext(AuthContext);
-    const { habbits, setHabbits, view, setView, initializeData } = useContext(AppContext)
+    const { habbits, setHabbits, view, setView, initializeData, appData, setAppData } = useContext(AppContext)
 
 
     const { login, validateLoginSession } = useAuth();
@@ -28,23 +28,25 @@ export default function Login({ error, setError, loading, setLoading }) {
             setError("");
             setLoading(true);
             const status = await login(data);
-
             if (status.status === 'Success') {
                 let userId = status.data.user.id;
-                toast.success(status.message)
-                setIsAuthenticated(true)
-                loginContext(status.data);
-                await initializeData(userId)
+                const hData = await getHabbitsByUserId(userId);
+                const hlData = await getHabbitLogsByUserId(userId)
+                const finalData = {
+                    user: status.data.user, habits: hData, logs: hlData
+                }
+                setAppData({ ...appData, finalData })
                 setTimeout(() => {
-                    setLoading(false);
-                    navigate('/new-dashboard')
+                    loginContext(finalData);
+                    navigate('/dashboard')
+                    setIsAuthenticated(true)
+                    toast.success(status.message)
                 }, 2000);
-                return;
+                setLoading(false);
             } else {
                 toast.error(status.message);
                 setError(status.message);
                 setLoading(false);
-                return;
             }
         }
     }

@@ -3,7 +3,6 @@ import React, { useEffect } from 'react'
 
 function Card({ s }) {
     useEffect(() => {
-        console.log(s);
     }, [])
     return (
         <div className={`text-center bg-white dark:bg-[#161b22] border border-[#d0d7de] dark:border-[#30363d] rounded-2xl p-5`}>

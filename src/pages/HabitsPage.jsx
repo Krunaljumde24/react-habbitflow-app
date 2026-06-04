@@ -18,7 +18,7 @@ function HabitsPage({ onEdit, onDelete }) {
     const [deleteModal, setDeleteModal] = useState(false)
 
     const { loggedInUser } = useContext(AuthContext)
-    const { habbits } = useContext(AppContext)
+    const { habbits, setLoading } = useContext(AppContext)
 
     const [logs, setLogs] = useState([
         {
@@ -51,6 +51,11 @@ function HabitsPage({ onEdit, onDelete }) {
     }
 
     useEffect(() => {
+
+        setTimeout(() => {
+            setLoading(false)
+        }, 1000);
+
         loadData();
         setModal(null)
     }, [habitUpdated])

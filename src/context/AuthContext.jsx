@@ -15,15 +15,18 @@ export const AuthProvider = ({ children }) => {
 
     const [isAuthenticated, setIsAuthenticated] = useState(false)
 
-    useEffect(() => {
-        checkAuth();
-    }, [])
+    // useEffect(() => {
+    //     checkAuth();
+    // }, [])
 
     const checkAuth = async () => {
-        const obj = localStorage.getItem("currentUser");
-        if (obj) {
-            const u = JSON.parse(obj);;
-            let token = u.accessToken;
+        const obj = localStorage.getItem("userData");
+        console.log(obj);
+
+        if (obj && obj?.user) {
+            const uData = JSON.parse(obj);;
+            console.log(uData);
+            let token = uData.auth.accessToken;
             try {
                 const result = await axios.get(`${baseUrl}/api/auth/verify`, {
                     headers: {
@@ -34,21 +37,25 @@ export const AuthProvider = ({ children }) => {
                 setLoggedInUser(u)
                 return await u;
             } catch (error) {
+                console.log(error);
                 toast.error('Session expired, Please re-login.')
-                localStorage.removeItem("currentUser");
+                localStorage.removeItem("userData");
                 setIsAuthenticated(false)
                 return false;
             }
+        } else {
+
         }
     }
 
     const loginContext = (userData) => {
-        localStorage.setItem("currentUser", JSON.stringify(userData));
-        setLoggedInUser(userData);
+        console.log(userData);
+        localStorage.setItem("userData", JSON.stringify(userData));
+        setLoggedInUser(userData.user);
     };
 
     const logoutContext = () => {
-        localStorage.removeItem("currentUser");
+        localStorage.removeItem("userData");
         setLoggedInUser(null);
         setIsAuthenticated(false)
     };
