@@ -7,9 +7,13 @@ import { getInitials } from '../utils/commonUtils.js';
 
 function SettingsPage() {
     const [msg, setMsg] = useState("");
-    const { habbits, logs } = useContext(AppContext)
+    const { habbits, logs, appData } = useContext(AppContext)
     const { loggedInUser, logoutContext } = useContext(AuthContext)
-    const [user, setUser] = useState(loggedInUser.user)
+
+    const [user, setUser] = useState({
+        name: '',
+        email: '',
+    })
     const [darkMode, setDarkMode] = useState(true)
 
     const download = (content, filename, type) => {
@@ -43,7 +47,7 @@ function SettingsPage() {
     );
 
     useEffect(() => {
-        console.log(user);
+        
 
     }, [])
     return (

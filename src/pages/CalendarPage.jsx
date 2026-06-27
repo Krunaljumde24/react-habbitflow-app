@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { todayStr, isHabitDue } from "../utils/commonUtils"
 import Card from '../components/ui/Card';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
@@ -11,7 +11,7 @@ function CalendarPage() {
     const [cur, setCur] = useState(new Date());
     const [selected, setSel] = useState(null);
 
-    const { habbits, logs } = useContext(AppContext)
+    const { habbits, logs, setLoading , loading} = useContext(AppContext)
 
     const year = cur.getFullYear();
     const month = cur.getMonth();
@@ -40,6 +40,13 @@ function CalendarPage() {
     const DOT = { complete: "#22c55e", partial: "#f59e0b", missed: "#ef4444" };
     const BG = { complete: "#22c55e18", partial: "#f59e0b18", missed: "#ef444418", future: "transparent", none: "transparent" };
 
+    useEffect(() => {
+        console.log('test');
+        console.log(loading);
+        
+        setLoading(false)
+
+    }, [])
     return (
         <div>
             <h1 className="text-[#1c2128] dark:text-[#e6edf3] text-2xl font-extrabold m-0 mb-6">Calendar</h1>

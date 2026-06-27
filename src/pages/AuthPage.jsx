@@ -12,14 +12,13 @@ function AuthPage() {
     const [isLogin, setIsLogin] = useState(true);
     const [form, setForm] = useState({ name: "", email: "", password: "" });
     const [error, setError] = useState("");
-    // const [loading, setLoading] = useState(false);
     const [loginTab, setLoginTab] = useState(true)
     const handle = (field) => (e) => setForm((f) => ({ ...f, [field]: e.target.value }));
 
 
     const { isAuthenticated, checkAuth } = useContext(AuthContext)
 
-    const { setLoading } = useContext(AppContext)
+    const { loading, setLoading } = useContext(AppContext)
     const navigate = useNavigate();
     useEffect(() => {
         if (isAuthenticated) {

@@ -62,9 +62,9 @@ function App() {
             <Toaster />
             {/* {(isAuthenticated && !loading && appData?.user) ? < AppContainer /> : <Loader />} */}
             < AppContainer />
-            <Loader
+            {/* <Loader
                 enabled={loading}
-            />
+            /> */}
 
         </div>
     )

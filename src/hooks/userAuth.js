@@ -6,8 +6,6 @@ import { useNavigate } from "react-router";
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
-
-
 const useAuth = () => {
     const { setIsAuthenticated, setLoggedInUser } = useContext(AuthContext)
 

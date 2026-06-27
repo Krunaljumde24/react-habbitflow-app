@@ -8,6 +8,8 @@ import DeleteModal from '../components/DeleteModal.jsx'
 import { getHabbitsByUserId } from "../service/AppService.js"
 import { AuthContext } from '../context/AuthContext.jsx';
 import { AppContext } from '../context/AppContext.jsx';
+import useLocalStore from '../utils/useLocalStore.js';
+import Loader from '../components/ui/Loader.jsx'
 
 function HabitsPage({ onEdit, onDelete }) {
     const [search, setSearch] = useState("");
@@ -16,9 +18,10 @@ function HabitsPage({ onEdit, onDelete }) {
     const today = todayStr();
     const [habitUpdated, setHabitUpdated] = useState(false)
     const [deleteModal, setDeleteModal] = useState(false)
-
-    const { loggedInUser } = useContext(AuthContext)
     const { habbits, setLoading } = useContext(AppContext)
+    const { isLoading, setIsLoading } = useState(false)
+
+    const { getUserDetails } = useLocalStore()
 
     const [logs, setLogs] = useState([
         {
@@ -44,19 +47,17 @@ function HabitsPage({ onEdit, onDelete }) {
         }])
     const [allHabits, setAllHabits] = useState([])
 
-    const loadData = async () => {
-        let userId = loggedInUser.user.id;
+    const loadData = async (userId) => {
         const data = await getHabbitsByUserId(userId)
         setAllHabits(data)
     }
 
     useEffect(() => {
+        const user = getUserDetails();
+        if (user) {
+            loadData(user.id);
+        }
 
-        setTimeout(() => {
-            setLoading(false)
-        }, 1000);
-
-        loadData();
         setModal(null)
     }, [habitUpdated])
 
@@ -80,6 +81,7 @@ function HabitsPage({ onEdit, onDelete }) {
 
     return (
         <div>
+            <Loader enabled={isLoading} />
             {/* Header */}
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-[#1c2128] dark:text-[#e6edf3] text-2xl font-extrabold m-0">My Habits</h1>
@@ -150,6 +152,7 @@ function HabitsPage({ onEdit, onDelete }) {
                     habit={modal}
                     habitUpdated={habitUpdated}
                     onSave={setHabitUpdated}
+                    setIsLoading={setIsLoading}
                     onClose={() => setModal(null)}
                 />
             )}

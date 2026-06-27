@@ -15,10 +15,6 @@ export const AuthProvider = ({ children }) => {
 
     const [isAuthenticated, setIsAuthenticated] = useState(false)
 
-    // useEffect(() => {
-    //     checkAuth();
-    // }, [])
-
     const checkAuth = async () => {
         const obj = localStorage.getItem("userData");
         console.log(obj);

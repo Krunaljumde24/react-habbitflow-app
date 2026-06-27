@@ -52,12 +52,9 @@ function NewDashboard() {
   }
 
   useEffect(() => {
-
     // console.log(appData);
-
-
-
-  }, [appData])
+    console.log(stats);
+  }, [stats])
 
   useEffect(() => {
     setTimeout(() => {
@@ -80,7 +77,7 @@ function NewDashboard() {
         {stats.map((s) => (
           <Card
             key={s.id}
-            s={s}
+            data={s}
           />
         ))}
       </div>

@@ -6,12 +6,11 @@ import { X } from 'lucide-react';
 import { CATEGORIES } from '../constants/categories';
 import { WEEKDAY_LABELS } from '../constants/weekLabes';
 import { AppContext } from '../context/AppContext';
-import { AuthContext } from '../context/AuthContext';
 import { saveHabbitForUserId } from '../service/AppService';
+import useLocalStore from '../utils/useLocalStore';
 
-function HabitModal({ habitUpdated, habit, onSave, onClose }) {
+function HabitModal({ habitUpdated, habit, onSave, onClose, setIsLoading }) {
 
-    const { getUserDetails } = useContext(AuthContext)
     const [form, setForm] = useState({
         name: "",
         description: "",
@@ -21,6 +20,8 @@ function HabitModal({ habitUpdated, habit, onSave, onClose }) {
         startDate: todayStr(),
         reminder: "",
     });
+
+    const { getUserId } = useLocalStore()
 
     useEffect(() => {
         if (habit != null) {
@@ -54,8 +55,8 @@ function HabitModal({ habitUpdated, habit, onSave, onClose }) {
     };
 
     const saveHabit = (formData) => {
-        let obj = {
-            userId: getUserDetails()?.user?.id,
+        const obj = {
+            userId: getUserId(),
             data: formData
         }
         saveHabbitForUserId(obj)
